@@ -53,7 +53,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                     if (value != null && value.isEmpty) {
                       return "Please write your email.";
                     } else if (!regEx.hasMatch(email!)) {
-                      return "Please right email.";
+                      return "Please input right email.";
                     }
                     return null;
                   },
