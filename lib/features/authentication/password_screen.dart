@@ -125,7 +125,7 @@ class _passwordScreenState extends State<PasswordScreen> {
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.grey.shade400,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
