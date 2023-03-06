@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_scale_tap/flutter_scale_tap.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
@@ -80,8 +81,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 onTap: () => _onTap(1),
               ),
               Gaps.h24,
-              GestureDetector(
-                onTap: _onPostVideoButtonTap,
+              ScaleTap(
+                onLongPress: _onPostVideoButtonTap,
+                onPressed: _onPostVideoButtonTap,
+                scaleMinValue: 1.2,
+                opacityMinValue: 0.7,
                 child: const PostVideoButton(),
               ),
               Gaps.h24,
