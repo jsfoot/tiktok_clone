@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/features/main_navigation/main_navigation_screen.dart';
 
 import '../../constants/gaps.dart';
 import '../../constants/sizes.dart';
@@ -39,6 +40,15 @@ class _TutorialScreenState extends State<TutorialScreen> {
         _showingPage = Page.first;
       });
     }
+  }
+
+  void _onEnterAppTap() {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const MainNavigationScreen(),
+      ),
+      (route) => false,
+    );
   }
 
   @override
@@ -91,7 +101,9 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   ),
                 ],
               ),
-              crossFadeState: _showingPage == Page.first ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+              crossFadeState: _showingPage == Page.first
+                  ? CrossFadeState.showFirst
+                  : CrossFadeState.showSecond,
               duration: const Duration(milliseconds: 300),
             ),
           ),
@@ -108,13 +120,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
               opacity: _showingPage == Page.first ? 0 : 1,
               child: CupertinoButton(
                 color: Theme.of(context).primaryColor,
-                onPressed: _showingPage == Page.second
-                    ? () {
-                        print("두번째 페이지");
-                      }
-                    : () {
-                        print("숨겨놔도 클릭이 되네?");
-                      },
+                onPressed: _onEnterAppTap,
                 child: const Text("Enter the app!"),
               ),
             ),

@@ -9,10 +9,10 @@ class PasswordScreen extends StatefulWidget {
   const PasswordScreen({Key? key}) : super(key: key);
 
   @override
-  State<PasswordScreen> createState() => _passwordScreenState();
+  State<PasswordScreen> createState() => _PasswordScreenState();
 }
 
-class _passwordScreenState extends State<PasswordScreen> {
+class _PasswordScreenState extends State<PasswordScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   String _password = "";
@@ -110,7 +110,9 @@ class _passwordScreenState extends State<PasswordScreen> {
                       GestureDetector(
                         onTap: _toggleObscureText,
                         child: FaIcon(
-                          _obscureText ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
+                          _obscureText
+                              ? FontAwesomeIcons.eye
+                              : FontAwesomeIcons.eyeSlash,
                           color: Colors.grey.shade600,
                           size: Sizes.size20,
                         ),
@@ -143,10 +145,12 @@ class _passwordScreenState extends State<PasswordScreen> {
                   FaIcon(
                     FontAwesomeIcons.circleCheck,
                     size: Sizes.size20,
-                    color: _isPasswordValid() ? Colors.green : Colors.grey.shade400,
+                    color: _isPasswordValid()
+                        ? Colors.green
+                        : Colors.grey.shade400,
                   ),
                   Gaps.h5,
-                  const Text("8 to 20 Charactors"),
+                  const Text("8 to 20 Characters"),
                 ],
               ),
               Gaps.v28,
