@@ -28,22 +28,9 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
   bool _isPaused = false;
   final Duration _animationDuration = const Duration(milliseconds: 200);
 
-  void _onVideoChanged() {
-    if (_videoPlayerController.value.isInitialized) {
-      if (_videoPlayerController.value.duration == _videoPlayerController.value.position) {
-        widget.onVideoFinished();
-      }
-    }
-  }
-
-  void _initVideoPlayer() async {
-    _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video.mp4");
-    await _videoPlayerController.initialize();
-    await _videoPlayerController.setLooping(true);
-    setState(() {
-      _videoPlayerController.addListener(_onVideoChanged);
-    });
-  }
+  int _maxLines = 1;
+  bool _isSeeMoreClicked = false;
+  String _seeMoreText = "See more";
 
   @override
   void initState() {
@@ -65,6 +52,23 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
     super.dispose();
   }
 
+  void _onVideoChanged() {
+    if (_videoPlayerController.value.isInitialized) {
+      if (_videoPlayerController.value.duration == _videoPlayerController.value.position) {
+        widget.onVideoFinished();
+      }
+    }
+  }
+
+  void _initVideoPlayer() async {
+    _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video.mp4");
+    await _videoPlayerController.initialize();
+    await _videoPlayerController.setLooping(true);
+    setState(() {
+      _videoPlayerController.addListener(_onVideoChanged);
+    });
+  }
+
   void _onVisibilityChanged(VisibilityInfo info) {
     if (info.visibleFraction == 1 && !_videoPlayerController.value.isPlaying) {
       _videoPlayerController.play();
@@ -81,6 +85,19 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
     }
     setState(() {
       _isPaused = !_isPaused;
+    });
+  }
+
+  void _onSeeMoreTap() {
+    if (_isSeeMoreClicked == false) {
+      _seeMoreText = "See more";
+      _maxLines = 1;
+    } else {
+      _seeMoreText = "See less";
+      _maxLines = 3;
+    }
+    setState(() {
+      _isSeeMoreClicked = !_isSeeMoreClicked;
     });
   }
 
@@ -132,8 +149,8 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
             left: 10,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   "@진수",
                   style: TextStyle(
                     fontSize: Sizes.size20,
@@ -142,12 +159,31 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
                   ),
                 ),
                 Gaps.v10,
-                Text(
-                  "This is my house in Busan!!",
-                  style: TextStyle(
-                    fontSize: Sizes.size16,
-                    color: Colors.white,
-                  ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 230,
+                      child: Text(
+                        "This is my house in Busan!! This is my house in Busan!! This is my house in Busan!! This is my house in Busan!! This is my house in Busan!!",
+                        style: const TextStyle(
+                          fontSize: Sizes.size16,
+                          color: Colors.white,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: _maxLines,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _onSeeMoreTap,
+                      child: Text(
+                        _seeMoreText,
+                        style: const TextStyle(
+                          fontSize: Sizes.size16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
