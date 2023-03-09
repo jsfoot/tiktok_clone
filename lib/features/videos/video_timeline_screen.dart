@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_post.dart';
 
@@ -42,10 +40,8 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
     super.dispose();
   }
 
-  Future<Void> _onRefresh() {
-    return Future.delayed(
-      const Duration(seconds: 5),
-    );
+  Future<dynamic> _onRefresh() {
+    return Future.delayed(const Duration(seconds: 2));
   }
 
   @override
