@@ -53,6 +53,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             onSubmitted: _onSearchSubmitted,
           ),
           bottom: TabBar(
+            onTap: (value) => FocusScope.of(context).unfocus(),
             padding: const EdgeInsets.symmetric(
               horizontal: Sizes.size16,
             ),
