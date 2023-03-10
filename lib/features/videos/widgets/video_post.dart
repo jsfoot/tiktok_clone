@@ -80,8 +80,6 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
   }
 
   void _onTogglePause() {
-    if (!mounted) return;
-
     if (_videoPlayerController.value.isPlaying) {
       _videoPlayerController.pause();
       _animationController.reverse();
