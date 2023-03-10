@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -22,7 +21,7 @@ class DiscoverScreen extends StatefulWidget {
 }
 
 class _DiscoverScreenState extends State<DiscoverScreen> {
-  final TextEditingController _textEditingController = TextEditingController(text: "Initail Text");
+  final TextEditingController _textEditingController = TextEditingController();
 
   void _onSearchChanged(String value) {
     print("Input text : $value");
@@ -38,6 +37,10 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     super.dispose();
   }
 
+  void _onClearTap() {
+    _textEditingController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -47,10 +50,81 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         appBar: AppBar(
           elevation: 1,
           centerTitle: true,
-          title: CupertinoSearchTextField(
-            controller: _textEditingController,
-            onChanged: _onSearchChanged,
-            onSubmitted: _onSearchSubmitted,
+          title: SizedBox(
+            height: 36,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Sizes.size2,
+              ),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: const FaIcon(FontAwesomeIcons.angleLeft),
+                  ),
+                  Gaps.h20,
+                  Expanded(
+                    child: TextField(
+                      maxLines: 1,
+                      controller: _textEditingController,
+                      cursorColor: Theme.of(context).primaryColor,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(Sizes.size4),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.shade200,
+                        contentPadding: const EdgeInsets.only(),
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(
+                            right: Sizes.size10,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Gaps.h12,
+                              GestureDetector(
+                                onTap: () {},
+                                child: const FaIcon(
+                                  FontAwesomeIcons.magnifyingGlass,
+                                  color: Colors.black,
+                                  size: Sizes.size16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(
+                            right: Sizes.size10,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Gaps.h20,
+                              GestureDetector(
+                                onTap: _onClearTap,
+                                child: FaIcon(
+                                  FontAwesomeIcons.solidCircleXmark,
+                                  color: Colors.grey.shade600,
+                                  size: Sizes.size16 + Sizes.size2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Gaps.h16,
+                  const FaIcon(
+                    FontAwesomeIcons.sliders,
+                    size: Sizes.size16 + Sizes.size2,
+                  ),
+                ],
+              ),
+            ),
           ),
           bottom: TabBar(
             onTap: (value) => FocusScope.of(context).unfocus(),
