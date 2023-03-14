@@ -216,7 +216,7 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
                   radius: 25,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
-                  foregroundImage: NetworkImage("https://avatars.githubusercontent.com/u/3612017"),
+                  foregroundImage: NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
                   child: Text("진수"),
                 ),
                 Gaps.v24,

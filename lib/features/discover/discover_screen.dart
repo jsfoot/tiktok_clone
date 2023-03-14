@@ -196,8 +196,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       children: [
                         const CircleAvatar(
                           radius: 12,
-                          backgroundImage: NetworkImage(
-                              "https://steamuserimages-a.akamaihd.net/ugc/1644340994747007967/853B20CD7694F5CF40E83AAC670572A3FE1E3D35/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"),
+                          backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
                         ),
                         Gaps.h4,
                         const Expanded(

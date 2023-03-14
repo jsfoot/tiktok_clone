@@ -84,12 +84,14 @@ class _ActivityScreenState extends State<ActivityScreen> with SingleTickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: GestureDetector(
           onTap: _onToggleAnimations,
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("All activitys"),
+              const Text("All activity"),
               Gaps.h2,
               RotationTransition(
                 turns: _arrowAnimation,
