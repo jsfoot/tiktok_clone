@@ -101,9 +101,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   ),
                 ],
               ),
-              crossFadeState: _showingPage == Page.first
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
+              crossFadeState: _showingPage == Page.first ? CrossFadeState.showFirst : CrossFadeState.showSecond,
               duration: const Duration(milliseconds: 300),
             ),
           ),
