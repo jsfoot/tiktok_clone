@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/users/widgets/persistent_icon_bar.dart';
 import 'package:tiktok_clone/features/users/widgets/persistent_tab_bar.dart';
 
 import '../../constants/gaps.dart';
@@ -89,9 +90,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           VerticalDivider(
                             width: Sizes.size32,
                             thickness: Sizes.size1,
-                            color: Colors.grey.shade400,
-                            indent: Sizes.size14,
-                            endIndent: Sizes.size14,
+                            color: Colors.grey.shade300,
+                            indent: Sizes.size12,
+                            endIndent: Sizes.size16,
                           ),
                           Column(
                             children: [
@@ -114,9 +115,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           VerticalDivider(
                             width: Sizes.size32,
                             thickness: Sizes.size1,
-                            color: Colors.grey.shade400,
-                            indent: Sizes.size14,
-                            endIndent: Sizes.size14,
+                            color: Colors.grey.shade300,
+                            indent: Sizes.size12,
+                            endIndent: Sizes.size16,
                           ),
                           Column(
                             children: [
@@ -139,32 +140,76 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ],
                       ),
                     ),
-                    Gaps.v14,
+                    Gaps.v4,
                     FractionallySizedBox(
-                      widthFactor: 0.33,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: Sizes.size12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(
-                              Sizes.size4,
+                      widthFactor: 0.65,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: Sizes.size12 + Sizes.size1,
+                              horizontal: Sizes.size52,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(
+                                  Sizes.size3,
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              "Follow",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                        ),
-                        child: const Text(
-                          "Follow",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                          Gaps.h4,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: Sizes.size10,
+                              horizontal: Sizes.size12,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(
+                                  Sizes.size3,
+                                ),
+                              ),
+                            ),
+                            child: const FaIcon(
+                              FontAwesomeIcons.youtube,
+                              size: Sizes.size20,
+                            ),
                           ),
-                          textAlign: TextAlign.center,
-                        ),
+                          Gaps.h4,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: Sizes.size12,
+                              horizontal: Sizes.size18,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(
+                                  Sizes.size3,
+                                ),
+                              ),
+                            ),
+                            child: const FaIcon(
+                              FontAwesomeIcons.caretDown,
+                              size: Sizes.size16,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Gaps.v14,
+                    Gaps.v10,
                     const Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: Sizes.size32,
@@ -200,6 +245,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 pinned: true,
                 delegate: PersistentTabBar(),
               ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: PersistentIconBar(),
+              ),
             ];
           },
           body: TabBarView(
@@ -215,15 +264,67 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   mainAxisSpacing: Sizes.size2,
                   childAspectRatio: 9 / 14,
                 ),
-                itemBuilder: (context, index) => Column(
+                itemBuilder: (context, index) => Stack(
                   children: [
-                    AspectRatio(
-                      aspectRatio: 9 / 14,
-                      child: FadeInImage.assetNetwork(
-                        fit: BoxFit.cover,
-                        placeholder: "assets/images/placeholder.jpg",
-                        image:
-                            "https://steamuserimages-a.akamaihd.net/ugc/1644340994747007967/853B20CD7694F5CF40E83AAC670572A3FE1E3D35/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
+                    Column(
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 9 / 14,
+                          child: FadeInImage.assetNetwork(
+                            fit: BoxFit.cover,
+                            placeholder: "assets/images/placeholder.jpg",
+                            image:
+                                "https://steamuserimages-a.akamaihd.net/ugc/1644340994747007967/853B20CD7694F5CF40E83AAC670572A3FE1E3D35/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
+                          ),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      top: 4,
+                      left: 4,
+                      child: SizedBox(
+                        width: Sizes.size48,
+                        height: Sizes.size16,
+                        child: Container(
+                          padding: const EdgeInsets.all(Sizes.size1),
+                          color: Theme.of(context).primaryColor,
+                          child: const Text(
+                            "Pinned",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: Sizes.size12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Positioned(
+                      right: 4,
+                      top: 4,
+                      child: Icon(
+                        Icons.photo_rounded,
+                        color: Colors.white,
+                        size: Sizes.size20,
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 4,
+                      left: 4,
+                      child: Row(
+                        children: const [
+                          Icon(
+                            Icons.play_arrow_outlined,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "3.1M",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
