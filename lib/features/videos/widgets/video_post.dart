@@ -34,6 +34,8 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
   bool _isSeeMoreClicked = false;
   String _seeMoreText = "See more";
 
+  bool _isMuted = false;
+
   @override
   void initState() {
     super.initState();
@@ -121,6 +123,17 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
       backgroundColor: Colors.transparent,
     );
     _onTogglePause();
+  }
+
+  void _onMuteTap() {
+    if (_isMuted) {
+      _videoPlayerController.setVolume(1.0);
+    } else {
+      _videoPlayerController.setVolume(0);
+    }
+    setState(() {
+      _isMuted = !_isMuted;
+    });
   }
 
   @override
@@ -217,6 +230,14 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
             right: 10,
             child: Column(
               children: [
+                GestureDetector(
+                  onTap: _onMuteTap,
+                  child: VideoButton(
+                    icon: _isMuted ? FontAwesomeIcons.volumeXmark : FontAwesomeIcons.volumeHigh,
+                    text: _isMuted ? "Unmute" : "mute",
+                  ),
+                ),
+                Gaps.v24,
                 const CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.black,
