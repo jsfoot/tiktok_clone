@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 
@@ -123,7 +124,7 @@ class _VideoCommentsState extends State<VideoComments> {
               ),
               Positioned(
                 bottom: 0,
-                width: size.width,
+                width: size.width < Breakpoints.lg ? size.width : Breakpoints.lg,
                 child: BottomAppBar(
                   color: Colors.white,
                   child: Padding(

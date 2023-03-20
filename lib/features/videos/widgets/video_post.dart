@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
@@ -119,7 +120,15 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
     await showModalBottomSheet(
       isScrollControlled: true,
       context: context,
-      builder: (context) => const VideoComments(),
+      builder: (context) => Center(
+        heightFactor: 1.0,
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: Breakpoints.lg,
+          ),
+          child: const VideoComments(),
+        ),
+      ),
       backgroundColor: Colors.transparent,
     );
     _onTogglePause();
