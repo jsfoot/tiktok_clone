@@ -73,6 +73,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: AnimatedOpacity(
           opacity: _showTitle ? 1 : 0,
           duration: const Duration(milliseconds: 300),

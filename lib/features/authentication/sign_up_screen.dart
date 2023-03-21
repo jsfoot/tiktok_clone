@@ -5,6 +5,7 @@ import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/username_screen.dart';
 import 'package:tiktok_clone/features/authentication/login_screen.dart';
 import 'package:tiktok_clone/features/authentication/widgets/auth_button.dart';
+import 'package:tiktok_clone/utils.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -43,21 +44,24 @@ class SignUpScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: Sizes.size40),
               child: Column(
                 children: [
+                  Gaps.v80,
                   const Text(
                     "Sign up for TikTok",
                     style: TextStyle(
                       fontSize: Sizes.size24,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  Gaps.v80,
-                  const Text(
-                    "Create a profile, follow other accounts, make your own videos, and more.",
-                    style: TextStyle(
-                      fontSize: Sizes.size16,
-                      color: Colors.black45,
+                  Gaps.v20,
+                  const Opacity(
+                    opacity: 0.7,
+                    child: Text(
+                      "Create a profile, follow other accounts, make your own videos, and more.",
+                      style: TextStyle(
+                        fontSize: Sizes.size16,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                   Gaps.v40,
                   if (orientation == Orientation.portrait) ...[
@@ -100,8 +104,8 @@ class SignUpScreen extends StatelessWidget {
             ),
           ),
           bottomNavigationBar: BottomAppBar(
+            color: isDarkMode(context) ? null : Colors.grey.shade50,
             elevation: 2,
-            color: Colors.grey.shade50,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 vertical: Sizes.size32,
