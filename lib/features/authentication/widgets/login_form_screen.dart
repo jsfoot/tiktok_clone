@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
@@ -24,7 +25,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
           MaterialPageRoute(
             builder: (context) => const InterestsScreen(),
           ),
-            (route) => false,
+          (route) => false,
         );
       }
     }
@@ -42,62 +43,69 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
         appBar: AppBar(
           title: const Text('Log in'),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Sizes.size36,
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    hintText: 'Email',
-                  ),
-                  validator: (value) {
-                    final regEx = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-                    String? email = value;
-                    if (value != null && value.isEmpty) {
-                      return "Please write your email.";
-                    } else if (!regEx.hasMatch(email!)) {
-                      return "Please input right email.";
-                    }
-                    return null;
-                  },
-                  onSaved: (newValue) {
-                    if (newValue != null) {
-                      formData['email'] = newValue;
-                    }
-                  },
+        body: Center(
+          child: Container(
+            constraints: const BoxConstraints(
+              maxWidth: Breakpoints.lg,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Sizes.size36,
+              ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        hintText: 'Email',
+                      ),
+                      validator: (value) {
+                        final regEx = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+                        String? email = value;
+                        if (value != null && value.isEmpty) {
+                          return "Please write your email.";
+                        } else if (!regEx.hasMatch(email!)) {
+                          return "Please input right email.";
+                        }
+                        return null;
+                      },
+                      onSaved: (newValue) {
+                        if (newValue != null) {
+                          formData['email'] = newValue;
+                        }
+                      },
+                    ),
+                    Gaps.v28,
+                    TextFormField(
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        hintText: 'Password',
+                      ),
+                      validator: (value) {
+                        if (value != null && value.isEmpty) {
+                          return "Please write your password.";
+                        }
+                        return null;
+                      },
+                      onSaved: (newValue) {
+                        if (newValue != null) {
+                          formData['password'] = newValue;
+                        }
+                      },
+                    ),
+                    Gaps.v16,
+                    GestureDetector(
+                      onTap: _onSubmitTap,
+                      child: const FormButton(
+                        disabled: false,
+                        formText: "Log in",
+                      ),
+                    ),
+                  ],
                 ),
-                Gaps.v28,
-                TextFormField(
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    hintText: 'Password',
-                  ),
-                  validator: (value) {
-                    if (value != null && value.isEmpty) {
-                      return "Please write your password.";
-                    }
-                    return null;
-                  },
-                  onSaved: (newValue) {
-                    if (newValue != null) {
-                      formData['password'] = newValue;
-                    }
-                  },
-                ),
-                Gaps.v16,
-                GestureDetector(
-                  onTap: _onSubmitTap,
-                  child: const FormButton(
-                    disabled: false,
-                    formText: "Log in",
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),

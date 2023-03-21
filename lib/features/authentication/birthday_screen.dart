@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
@@ -36,7 +37,7 @@ class _UsernameScreenState extends State<BirthdayScreen> {
       MaterialPageRoute(
         builder: (context) => const InterestsScreen(),
       ),
-        (route) => false,
+      (route) => false,
     );
   }
 
@@ -59,68 +60,76 @@ class _UsernameScreenState extends State<BirthdayScreen> {
             "Sign up",
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Sizes.size36,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Gaps.v40,
-              const Text(
-                "Wnen is your birthday?",
-                style: TextStyle(
-                  fontSize: Sizes.size24,
-                  fontWeight: FontWeight.w700,
-                ),
+        body: Center(
+          child: Container(
+            constraints: const BoxConstraints(
+              maxWidth: Breakpoints.lg,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Sizes.size36,
               ),
-              Gaps.v8,
-              const Text(
-                "Your Birthday won't be shown publictly.",
-                style: TextStyle(
-                  fontSize: Sizes.size16,
-                  color: Colors.black54,
-                ),
-              ),
-              Gaps.v16,
-              TextField(
-                enabled: false,
-                controller: _birthdayController,
-                cursorColor: Theme.of(context).primaryColor,
-                onEditingComplete: _onNextTap,
-                decoration: InputDecoration(
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade400,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Gaps.v40,
+                  const Text(
+                    "Wnen is your birthday?",
+                    style: TextStyle(
+                      fontSize: Sizes.size24,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor,
+                  Gaps.v8,
+                  const Text(
+                    "Your Birthday won't be shown publictly.",
+                    style: TextStyle(
+                      fontSize: Sizes.size16,
+                      color: Colors.black54,
                     ),
                   ),
-                ),
+                  Gaps.v16,
+                  TextField(
+                    enabled: false,
+                    controller: _birthdayController,
+                    cursorColor: Theme.of(context).primaryColor,
+                    onEditingComplete: _onNextTap,
+                    decoration: InputDecoration(
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Gaps.v16,
+                  GestureDetector(
+                    onTap: _onNextTap,
+                    child: const FormButton(
+                      disabled: false,
+                      formText: "Next",
+                    ),
+                  ),
+                ],
               ),
-              Gaps.v16,
-              GestureDetector(
-                onTap: _onNextTap,
-                child: const FormButton(
-                  disabled: false,
-                  formText: "Next",
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-        bottomNavigationBar: BottomAppBar(
-          child: SizedBox(
-            height: 300,
-            child: CupertinoDatePicker(
-              initialDateTime: initialDate,
-              maximumDate: initialDate,
-              mode: CupertinoDatePickerMode.date,
-              onDateTimeChanged: _setTextFieldDate,
-            ),
+        bottomNavigationBar: Container(
+          constraints: const BoxConstraints(
+            maxWidth: Breakpoints.lg,
+          ),
+          height: 300,
+          child: CupertinoDatePicker(
+            initialDateTime: initialDate,
+            maximumDate: initialDate,
+            mode: CupertinoDatePickerMode.date,
+            onDateTimeChanged: _setTextFieldDate,
           ),
         ),
       ),

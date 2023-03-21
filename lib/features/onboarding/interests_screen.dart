@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/onboarding/tutorial_screen.dart';
@@ -80,7 +81,10 @@ class _InterestsScreenState extends State<InterestsScreen> {
           child: const Text("Choose your interests"),
         ),
       ),
-      bottomNavigationBar: Padding(
+      bottomNavigationBar: Container(
+        constraints: const BoxConstraints(
+          maxWidth: Breakpoints.lg,
+        ),
         padding: const EdgeInsets.only(
           bottom: Sizes.size48,
           top: Sizes.size16,
@@ -109,41 +113,48 @@ class _InterestsScreenState extends State<InterestsScreen> {
         controller: _scrollController,
         child: SingleChildScrollView(
           controller: _scrollController,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              bottom: Sizes.size16,
-              left: Sizes.size24,
-              right: Sizes.size24,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Choose your interests",
-                  style: TextStyle(
-                    fontSize: Sizes.size40,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Center(
+            child: Container(
+              constraints: const BoxConstraints(
+                maxWidth: Breakpoints.lg,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  bottom: Sizes.size16,
+                  left: Sizes.size24,
+                  right: Sizes.size24,
                 ),
-                Gaps.v20,
-                const Text(
-                  "Get better video recommendations",
-                  style: TextStyle(
-                    fontSize: Sizes.size20,
-                  ),
-                ),
-                Gaps.v64,
-                Wrap(
-                  runSpacing: 15,
-                  spacing: 15,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    for (var interest in interests)
-                      InterestButton(
-                        interest: interest,
+                    const Text(
+                      "Choose your interests",
+                      style: TextStyle(
+                        fontSize: Sizes.size40,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    Gaps.v20,
+                    const Text(
+                      "Get better video recommendations",
+                      style: TextStyle(
+                        fontSize: Sizes.size20,
+                      ),
+                    ),
+                    Gaps.v64,
+                    Wrap(
+                      runSpacing: 15,
+                      spacing: 15,
+                      children: [
+                        for (var interest in interests)
+                          InterestButton(
+                            interest: interest,
+                          ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

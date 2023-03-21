@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/birthday_screen.dart';
@@ -72,96 +73,99 @@ class _PasswordScreenState extends State<PasswordScreen> {
             "Sign up",
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Sizes.size36,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Gaps.v40,
-              const Text(
-                "Password",
-                style: TextStyle(
-                  fontSize: Sizes.size24,
-                  fontWeight: FontWeight.w700,
-                ),
+        body: Center(
+          child: Container(
+            constraints: const BoxConstraints(
+              maxWidth: Breakpoints.lg,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Sizes.size36,
               ),
-              Gaps.v16,
-              TextField(
-                controller: _passwordController,
-                onEditingComplete: _onSubmit,
-                obscureText: _obscureText,
-                autocorrect: false,
-                cursorColor: Theme.of(context).primaryColor,
-                decoration: InputDecoration(
-                  suffix: Row(
-                    mainAxisSize: MainAxisSize.min,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Gaps.v40,
+                  const Text(
+                    "Password",
+                    style: TextStyle(
+                      fontSize: Sizes.size24,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Gaps.v16,
+                  TextField(
+                    controller: _passwordController,
+                    onEditingComplete: _onSubmit,
+                    obscureText: _obscureText,
+                    autocorrect: false,
+                    cursorColor: Theme.of(context).primaryColor,
+                    decoration: InputDecoration(
+                      suffix: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          GestureDetector(
+                            onTap: _onClearTap,
+                            child: FaIcon(
+                              FontAwesomeIcons.solidCircleXmark,
+                              color: Colors.grey.shade600,
+                              size: Sizes.size20,
+                            ),
+                          ),
+                          Gaps.h16,
+                          GestureDetector(
+                            onTap: _toggleObscureText,
+                            child: FaIcon(
+                              _obscureText ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
+                              color: Colors.grey.shade600,
+                              size: Sizes.size20,
+                            ),
+                          ),
+                        ],
+                      ),
+                      hintText: "Make Strong!",
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Gaps.v10,
+                  const Text(
+                    "Your password must have :",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Gaps.v10,
+                  Row(
                     children: [
-                      GestureDetector(
-                        onTap: _onClearTap,
-                        child: FaIcon(
-                          FontAwesomeIcons.solidCircleXmark,
-                          color: Colors.grey.shade600,
-                          size: Sizes.size20,
-                        ),
+                      FaIcon(
+                        FontAwesomeIcons.circleCheck,
+                        size: Sizes.size20,
+                        color: _isPasswordValid() ? Colors.green : Colors.grey.shade400,
                       ),
-                      Gaps.h16,
-                      GestureDetector(
-                        onTap: _toggleObscureText,
-                        child: FaIcon(
-                          _obscureText
-                              ? FontAwesomeIcons.eye
-                              : FontAwesomeIcons.eyeSlash,
-                          color: Colors.grey.shade600,
-                          size: Sizes.size20,
-                        ),
-                      ),
+                      Gaps.h5,
+                      const Text("8 to 20 Characters"),
                     ],
                   ),
-                  hintText: "Make Strong!",
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade400,
+                  Gaps.v28,
+                  GestureDetector(
+                    onTap: _onSubmit,
+                    child: FormButton(
+                      disabled: !_isPasswordValid(),
+                      formText: "Next",
                     ),
                   ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-              ),
-              Gaps.v10,
-              const Text(
-                "Your password must have :",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Gaps.v10,
-              Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.circleCheck,
-                    size: Sizes.size20,
-                    color: _isPasswordValid()
-                        ? Colors.green
-                        : Colors.grey.shade400,
-                  ),
-                  Gaps.h5,
-                  const Text("8 to 20 Characters"),
                 ],
               ),
-              Gaps.v28,
-              GestureDetector(
-                onTap: _onSubmit,
-                child: FormButton(
-                  disabled: !_isPasswordValid(),
-                  formText: "Next",
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
