@@ -141,8 +141,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 Positioned(
                   bottom: 0,
                   width: width < Breakpoints.lg ? width : Breakpoints.lg,
-                  child: BottomAppBar(
-                    elevation: 0,
+                  child: Container(
                     color: Theme.of(context).appBarTheme.backgroundColor,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(

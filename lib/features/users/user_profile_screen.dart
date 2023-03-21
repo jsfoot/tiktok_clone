@@ -5,7 +5,6 @@ import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/settings/settings_screen.dart';
 import 'package:tiktok_clone/features/users/widgets/persistent_icon_bar.dart';
 import 'package:tiktok_clone/features/users/widgets/persistent_tab_bar.dart';
-import 'package:tiktok_clone/utils.dart';
 
 import '../../constants/gaps.dart';
 
@@ -26,7 +25,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final isDark = isDarkMode(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -86,7 +84,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             ),
                             Gaps.v24,
                             SizedBox(
-                              height: Sizes.size48,
+                              height: Sizes.size52,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -305,7 +303,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     Row(
                                       children: [
                                         SizedBox(
-                                          height: Sizes.size48,
+                                          height: Sizes.size52,
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [

@@ -27,6 +27,7 @@ class TikTokApp extends StatelessWidget {
       title: 'TikTok_Clone',
       themeMode: ThemeMode.system,
       theme: ThemeData(
+        useMaterial3: true,
         scaffoldBackgroundColor: Colors.white,
         bottomAppBarTheme: BottomAppBarTheme(color: Colors.grey.shade50),
         brightness: Brightness.light,
@@ -46,6 +47,7 @@ class TikTokApp extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
           systemOverlayStyle: SystemUiOverlayStyle.light,
+          surfaceTintColor: Colors.white,
         ),
         textTheme: Typography.blackMountainView,
         tabBarTheme: TabBarTheme(
@@ -58,6 +60,7 @@ class TikTokApp extends StatelessWidget {
         ),
       ),
       darkTheme: ThemeData(
+        useMaterial3: true,
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.black,
         primaryColor: const Color(0xFFE9435A),
@@ -66,13 +69,27 @@ class TikTokApp extends StatelessWidget {
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.grey.shade900,
+          surfaceTintColor: Colors.grey.shade900,
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: Sizes.size18,
+            fontWeight: FontWeight.w600,
+          ),
+          actionsIconTheme: IconThemeData(
+            color: Colors.grey.shade100,
+          ),
+          iconTheme: IconThemeData(
+            color: Colors.grey.shade100,
+          ),
         ),
         bottomAppBarTheme: BottomAppBarTheme(
           color: Colors.grey.shade900,
         ),
         textTheme: Typography.whiteMountainView,
-        tabBarTheme: const TabBarTheme(
+        tabBarTheme: TabBarTheme(
+          unselectedLabelColor: Colors.grey.shade700,
           indicatorColor: Colors.white,
+          labelColor: Colors.white,
         ),
       ),
       home: const MainNavigationScreen(),
