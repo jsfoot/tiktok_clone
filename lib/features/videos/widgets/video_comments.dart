@@ -5,6 +5,8 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/utils.dart';
 
+import '../../../generated/l10n.dart';
+
 class VideoComments extends StatefulWidget {
   const VideoComments({Key? key}) : super(key: key);
 
@@ -48,7 +50,7 @@ class _VideoCommentsState extends State<VideoComments> {
         backgroundColor: isDark ? null : Colors.grey.shade50,
         appBar: AppBar(
           backgroundColor: isDark ? null : Colors.grey.shade50,
-          title: const Text("22796 comments"),
+          title: Text(S.of(context).commentTitle(51321, 51321)),
           centerTitle: true,
           automaticallyImplyLeading: false,
           actions: [

@@ -103,7 +103,7 @@ class LogInScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(
                 top: Sizes.size32,
-                bottom: Sizes.size64,
+                bottom: Sizes.size32,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -115,7 +115,7 @@ class LogInScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () => _onSignUpTap(context),
                     child: Text(
-                      "Sign up.",
+                      "Sign up",
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.w600,

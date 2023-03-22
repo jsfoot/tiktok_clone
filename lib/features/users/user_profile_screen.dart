@@ -167,7 +167,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: Sizes.size12 + Sizes.size1,
+                                      vertical: Sizes.size11,
                                       horizontal: Sizes.size52,
                                     ),
                                     decoration: BoxDecoration(
@@ -386,7 +386,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.symmetric(
-                                            vertical: Sizes.size12 + Sizes.size1,
+                                            vertical: Sizes.size11,
                                             horizontal: Sizes.size52,
                                           ),
                                           decoration: BoxDecoration(
@@ -523,19 +523,18 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Positioned(
                             top: 4,
                             left: 4,
-                            child: SizedBox(
-                              width: Sizes.size48,
-                              height: Sizes.size16,
-                              child: Container(
-                                padding: const EdgeInsets.all(Sizes.size1),
-                                color: Theme.of(context).primaryColor,
-                                child: const Text(
-                                  "Pinned",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: Sizes.size12,
-                                  ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: Sizes.size2,
+                                vertical: Sizes.size1,
+                              ),
+                              color: Theme.of(context).primaryColor,
+                              child: const Text(
+                                "Pinned",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: Sizes.size12,
                                 ),
                               ),
                             ),

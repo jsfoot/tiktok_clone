@@ -9,6 +9,8 @@ import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../../../generated/l10n.dart';
+
 class VideoPost extends StatefulWidget {
   final Function onVideoFinished;
   final int index;
@@ -66,7 +68,7 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
   }
 
   void _initVideoPlayer() async {
-    _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video.mp4");
+    _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video_1.mp4");
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
     if (kIsWeb) {
@@ -243,10 +245,10 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
                   onTap: _onMuteTap,
                   child: VideoButton(
                     icon: _isMuted ? FontAwesomeIcons.volumeXmark : FontAwesomeIcons.volumeHigh,
-                    text: _isMuted ? "Unmute" : "mute",
+                    text: _isMuted ? "" : "",
                   ),
                 ),
-                Gaps.v24,
+                Gaps.v6,
                 const CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.black,
@@ -255,16 +257,16 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
                   child: Text("진수"),
                 ),
                 Gaps.v24,
-                const VideoButton(
+                VideoButton(
                   icon: FontAwesomeIcons.solidHeart,
-                  text: "2.9M",
+                  text: S.of(context).likeCount(3215456854),
                 ),
                 Gaps.v24,
                 GestureDetector(
                   onTap: () => _onCommentsTap(context),
-                  child: const VideoButton(
+                  child: VideoButton(
                     icon: FontAwesomeIcons.solidComment,
-                    text: "33K",
+                    text: S.of(context).commentCount(5132),
                   ),
                 ),
                 Gaps.v24,
