@@ -1,18 +1,34 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/password_screen.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
 
-class EmailScreen extends StatefulWidget {
-  const EmailScreen({Key? key}) : super(key: key);
+class EmailScreenArgs {
+  final String username;
 
-  @override
-  State<EmailScreen> createState() => _emailScreenState();
+  EmailScreenArgs({required this.username});
 }
 
-class _emailScreenState extends State<EmailScreen> {
+class EmailScreen extends StatefulWidget {
+  static String routeURL = "email";
+  static String routeName = "email";
+
+  final String username;
+
+  const EmailScreen({
+    Key? key,
+    required this.username,
+  }) : super(key: key);
+
+  @override
+  State<EmailScreen> createState() => _EmailScreenState();
+}
+
+class _EmailScreenState extends State<EmailScreen> {
   final TextEditingController _emailController = TextEditingController();
 
   String _email = "";
@@ -80,9 +96,9 @@ class _emailScreenState extends State<EmailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Gaps.v40,
-                  const Text(
-                    "What is your email",
-                    style: TextStyle(
+                  Text(
+                    "What is your email, ${widget.username}?",
+                    style: const TextStyle(
                       fontSize: Sizes.size24,
                       fontWeight: FontWeight.w700,
                     ),

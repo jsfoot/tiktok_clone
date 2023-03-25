@@ -1,5 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/settings/settings_screen.dart';
@@ -9,7 +11,14 @@ import 'package:tiktok_clone/features/users/widgets/persistent_tab_bar.dart';
 import '../../constants/gaps.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({Key? key}) : super(key: key);
+  final String username;
+  final String tab;
+
+  const UserProfileScreen({
+    Key? key,
+    required this.username,
+    required this.tab,
+  }) : super(key: key);
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -30,6 +39,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       body: SafeArea(
         child: DefaultTabController(
+          initialIndex: widget.tab == "likes" ? 1 : 0,
           length: 2,
           child: Center(
             child: Container(
@@ -40,7 +50,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
                   return [
                     SliverAppBar(
-                      title: const Text("진수"),
+                      title: Text(widget.username),
                       centerTitle: true,
                       actions: [
                         IconButton(
@@ -57,19 +67,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         child: Column(
                           children: [
                             Gaps.v20,
-                            const CircleAvatar(
+                            CircleAvatar(
                               radius: 50,
                               foregroundColor: Colors.blue,
-                              foregroundImage: NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
-                              child: Text("진수"),
+                              foregroundImage: const NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
+                              child: Text(widget.username),
                             ),
                             Gaps.v20,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text(
-                                  "@진수",
-                                  style: TextStyle(
+                                Text(
+                                  "@${widget.username}",
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.w600,
                                     fontSize: Sizes.size18,
                                   ),
@@ -269,19 +279,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               children: [
                                 Column(
                                   children: [
-                                    const CircleAvatar(
+                                    CircleAvatar(
                                       radius: 50,
                                       foregroundColor: Colors.blue,
-                                      foregroundImage: NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
-                                      child: Text("진수"),
+                                      foregroundImage: const NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
+                                      child: Text(widget.username),
                                     ),
                                     Gaps.v8,
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        const Text(
-                                          "@진수",
-                                          style: TextStyle(
+                                        Text(
+                                          "@${widget.username}",
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: Sizes.size18,
                                           ),
