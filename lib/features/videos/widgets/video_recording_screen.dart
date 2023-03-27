@@ -55,7 +55,25 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> with Ticker
       await initCamera();
       setState(() {});
     } else {
-      //show something
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Message"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const [
+                Text("Please allow permissions"),
+                Text("Can not use this app if you not allow"),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(onPressed: initPermissions, child: const Text("Ok")),
+            TextButton(onPressed: Navigator.of(context).pop, child: const Text("No")),
+          ],
+        ),
+      );
     }
   }
 
