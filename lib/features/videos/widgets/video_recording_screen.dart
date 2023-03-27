@@ -69,7 +69,9 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> with Ticker
             ),
           ),
           actions: <Widget>[
+
             TextButton(onPressed: _allowPermission, child: const Text("Ok")),
+
             TextButton(onPressed: Navigator.of(context).pop, child: const Text("No")),
           ],
         ),
