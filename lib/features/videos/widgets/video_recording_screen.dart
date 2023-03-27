@@ -69,12 +69,20 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> with Ticker
             ),
           ),
           actions: <Widget>[
-            TextButton(onPressed: initPermissions, child: const Text("Ok")),
+
+            TextButton(onPressed: _allowPermission, child: const Text("Ok")),
+
             TextButton(onPressed: Navigator.of(context).pop, child: const Text("No")),
           ],
         ),
       );
     }
+  }
+
+  void _allowPermission() {
+    initPermissions();
+    initCamera();
+    setState(() {});
   }
 
   Future<void> initCamera() async {
