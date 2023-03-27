@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -42,6 +44,12 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> with Ticker
     lowerBound: 0.0,
     upperBound: 1.0,
   );
+
+  double startY = 0.0;
+  double updatedY = 0.0;
+  double zoomLevel = 0.0;
+  double minZoomLevel = 1.0;
+  double maxZoomLevel = 1.0;
 
   Future<void> initPermissions() async {
     final cameraPermission = await Permission.camera.request();
@@ -164,6 +172,22 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> with Ticker
     );
   }
 
+  void _onVerticalDragStartHandler(DragStartDetails details) {
+    startY = details.globalPosition.dy.floorToDouble();
+  }
+
+  Future<void> _onVerticalDragUpdateHandler(DragUpdateDetails details) async {
+    final minZoomLevel = await _cameraController.getMinZoomLevel();
+    final maxZoomLevel = await _cameraController.getMaxZoomLevel();
+
+    setState(() {
+      updatedY = details.globalPosition.dy.floorToDouble();
+      // 0 ~ 20 : 0 ~ 8.0
+      zoomLevel = min(maxZoomLevel, (startY - updatedY) / startY * 80);
+      _cameraController.setZoomLevel(max(minZoomLevel, zoomLevel));
+    });
+  }
+
   @override
   void dispose() {
     _progressAnimationController.dispose();
@@ -272,6 +296,8 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> with Ticker
                         GestureDetector(
                           onTapDown: _startRecording,
                           onTapUp: (details) => _stopRecording(),
+                          onVerticalDragStart: _onVerticalDragStartHandler,
+                          onVerticalDragUpdate: _onVerticalDragUpdateHandler,
                           child: ScaleTransition(
                             scale: _buttonAnimation,
                             child: Stack(
