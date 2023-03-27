@@ -180,7 +180,7 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> with Ticker
 
     setState(() {
       updatedY = details.globalPosition.dy.floorToDouble();
-      // 0 ~ 20 : 0 ~ 8.0
+      //0 ~ 20 : 0 ~ 8.0
       zoomLevel = min(maxZoomLevel, (startY - updatedY) / startY * 80);
       _cameraController.setZoomLevel(max(minZoomLevel, zoomLevel));
     });
