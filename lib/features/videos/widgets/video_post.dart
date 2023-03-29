@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/common/widgets/video_configration/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
@@ -9,7 +10,6 @@ import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../../common/widgets/video_configration/video_config.dart';
 import '../../../generated/l10n.dart';
 
 class VideoPost extends StatefulWidget {
@@ -39,6 +39,7 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
   String _seeMoreText = "See more";
 
   bool _isMuted = false;
+  bool _autoMute = videoConfig.autoMute;
 
   @override
   void initState() {
@@ -52,6 +53,12 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
       value: 1.5,
       duration: _animationDuration,
     );
+
+    videoConfig.addListener(() {
+      setState(() {
+        _autoMute = videoConfig.autoMute;
+      });
+    });
   }
 
   @override
@@ -193,11 +200,11 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
           ),
           Positioned(
             left: Sizes.size20,
-            top: Sizes.size20,
+            top: Sizes.size32,
             child: IconButton(
-              onPressed: VideoConfigData.of(context).toggleMuted,
+              onPressed: videoConfig.toggleAutoMute,
               icon: FaIcon(
-                VideoConfigData.of(context).autoMute ? FontAwesomeIcons.volumeOff : FontAwesomeIcons.volumeHigh,
+                _autoMute ? FontAwesomeIcons.volumeOff : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
               ),
             ),
@@ -256,8 +263,8 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
                 GestureDetector(
                   onTap: _onMuteTap,
                   child: VideoButton(
-                    icon: _isMuted ? FontAwesomeIcons.volumeXmark : FontAwesomeIcons.volumeHigh,
-                    text: _isMuted ? "" : "",
+                    icon: _isMuted || _autoMute ? FontAwesomeIcons.volumeXmark : FontAwesomeIcons.volumeHigh,
+                    text: _isMuted || _autoMute ? "" : "",
                   ),
                 ),
                 Gaps.v6,

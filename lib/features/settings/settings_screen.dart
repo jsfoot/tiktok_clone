@@ -40,13 +40,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             child: ListView(
               children: [
-                SwitchListTile.adaptive(
-                  title: const Text("Auto Mute"),
-                  subtitle: const Text("Videos will be muted by default."),
-                  value: VideoConfigData.of(context).autoMute,
-                  onChanged: (value) {
-                    VideoConfigData.of(context).toggleMuted();
-                  },
+                AnimatedBuilder(
+                  animation: videoConfig,
+                  builder: (context, child) => SwitchListTile.adaptive(
+                    value: videoConfig.autoMute,
+                    onChanged: (value) {
+                      videoConfig.toggleAutoMute();
+                    },
+                    title: const Text("Mute video"),
+                    subtitle: const Text("Video will be muted by default."),
+                  ),
                 ),
                 ListTile(
                   onTap: () async {
