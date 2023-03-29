@@ -39,7 +39,7 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
   String _seeMoreText = "See more";
 
   bool _isMuted = false;
-  bool _autoMute = videoConfig.autoMute;
+  bool _autoMute = videoConfig.value;
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
 
     videoConfig.addListener(() {
       setState(() {
-        _autoMute = videoConfig.autoMute;
+        _autoMute = videoConfig.value;
       });
     });
   }
@@ -202,7 +202,9 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
             left: Sizes.size20,
             top: Sizes.size32,
             child: IconButton(
-              onPressed: videoConfig.toggleAutoMute,
+              onPressed: () {
+                videoConfig.value = !videoConfig.value;
+              },
               icon: FaIcon(
                 _autoMute ? FontAwesomeIcons.volumeOff : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
