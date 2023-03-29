@@ -9,6 +9,7 @@ import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../../../common/widgets/video_configration/video_config.dart';
 import '../../../generated/l10n.dart';
 
 class VideoPost extends StatefulWidget {
@@ -187,6 +188,17 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: Sizes.size20,
+            top: Sizes.size20,
+            child: IconButton(
+              onPressed: VideoConfigData.of(context).toggleMuted,
+              icon: FaIcon(
+                VideoConfigData.of(context).autoMute ? FontAwesomeIcons.volumeOff : FontAwesomeIcons.volumeHigh,
+                color: Colors.white,
               ),
             ),
           ),

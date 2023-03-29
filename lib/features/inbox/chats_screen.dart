@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/chat_detail_screen.dart';
 
 class ChatsScreen extends StatefulWidget {
+  static const String routeName = "chats";
+  static const String routeURL = "/chats";
+
   const ChatsScreen({Key? key}) : super(key: key);
 
   @override
@@ -49,22 +53,20 @@ class _ChatsScreenState extends State<ChatsScreen> {
     }
   }
 
-  void _onChatTap() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ChatDetailScreen(),
-      ),
+  void _onChatTap(int index) {
+    context.pushNamed(
+      ChatDetailScreen.routeName,
+      params: {"chatId": "$index"},
     );
   }
 
   Widget _makeTile(int index) {
     return ListTile(
-      onTap: _onChatTap,
+      onTap: () => _onChatTap(index),
       onLongPress: () => _deleteItem(index),
       leading: const CircleAvatar(
         radius: 30,
-        foregroundImage: NetworkImage(
-            "https://i.namu.wiki/i/_S33x7gfqLzEoK-LtYuAX2HTclRLuR4_M5Ajt87WPT6f2JwN1OSrTgBJUb5frxPQn5_5uyF9Gccyyiw9kLOkI_nvZJKptDMoaLfAvuHCAfkr2xgdGtEpz7jkfagqwB8pw86169Ghyg2cnUqH9YH-Rw.webp"),
+        foregroundImage: NetworkImage("https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg"),
         child: Text("원영"),
       ),
       title: Row(

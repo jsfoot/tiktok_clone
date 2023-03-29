@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/common/widgets/video_configration/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -23,7 +24,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(Localizations.localeOf(context));
+    // print(Localizations.localeOf(context));
     return Localizations.override(
       context: context,
       locale: const Locale("ko"),
@@ -39,6 +40,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             child: ListView(
               children: [
+                SwitchListTile.adaptive(
+                  title: const Text("Auto Mute"),
+                  subtitle: const Text("Videos will be muted by default."),
+                  value: VideoConfigData.of(context).autoMute,
+                  onChanged: (value) {
+                    VideoConfigData.of(context).toggleMuted();
+                  },
+                ),
                 ListTile(
                   onTap: () async {
                     final date = await showDatePicker(

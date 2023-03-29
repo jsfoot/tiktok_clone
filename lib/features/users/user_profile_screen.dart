@@ -97,8 +97,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               height: Sizes.size52,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       const Text(
                                         "97",
@@ -107,7 +110,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           fontSize: Sizes.size18,
                                         ),
                                       ),
-                                      Gaps.v3,
+                                      Gaps.v2,
                                       Text(
                                         "Following",
                                         style: TextStyle(
@@ -132,7 +135,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           fontSize: Sizes.size18,
                                         ),
                                       ),
-                                      Gaps.v3,
+                                      Gaps.v2,
                                       Text(
                                         "Followers",
                                         style: TextStyle(
@@ -157,7 +160,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           fontSize: Sizes.size18,
                                         ),
                                       ),
-                                      Gaps.v5,
+                                      Gaps.v2,
                                       Text(
                                         "Likes",
                                         style: TextStyle(
@@ -174,6 +177,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               widthFactor: 0.65,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.symmetric(
@@ -326,7 +330,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                       fontSize: Sizes.size18,
                                                     ),
                                                   ),
-                                                  Gaps.v3,
+                                                  Gaps.v2,
                                                   Text(
                                                     "Following",
                                                     style: TextStyle(
@@ -351,7 +355,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                       fontSize: Sizes.size18,
                                                     ),
                                                   ),
-                                                  Gaps.v3,
+                                                  Gaps.v2,
                                                   Text(
                                                     "Followers",
                                                     style: TextStyle(
@@ -376,7 +380,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                       fontSize: Sizes.size18,
                                                     ),
                                                   ),
-                                                  Gaps.v5,
+                                                  Gaps.v2,
                                                   Text(
                                                     "Likes",
                                                     style: TextStyle(

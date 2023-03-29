@@ -6,7 +6,15 @@ import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/utils.dart';
 
 class ChatDetailScreen extends StatefulWidget {
-  const ChatDetailScreen({Key? key}) : super(key: key);
+  static const String routeName = "chatDetail";
+  static const String routeURL = ":chatId";
+
+  final String chatId;
+
+  const ChatDetailScreen({
+    Key? key,
+    required this.chatId,
+  }) : super(key: key);
 
   @override
   State<ChatDetailScreen> createState() => _ChatDetailScreenState();
@@ -44,8 +52,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             children: [
               const CircleAvatar(
                 radius: Sizes.size24,
-                foregroundImage: NetworkImage(
-                    "https://i.namu.wiki/i/_S33x7gfqLzEoK-LtYuAX2HTclRLuR4_M5Ajt87WPT6f2JwN1OSrTgBJUb5frxPQn5_5uyF9Gccyyiw9kLOkI_nvZJKptDMoaLfAvuHCAfkr2xgdGtEpz7jkfagqwB8pw86169Ghyg2cnUqH9YH-Rw.webp"),
+                foregroundImage: NetworkImage("https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg"),
                 child: Text("원영"),
               ),
               Positioned(
@@ -71,9 +78,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ),
             ],
           ),
-          title: const Text(
-            "원영",
-            style: TextStyle(
+          title: Text(
+            "원영(${widget.chatId})",
+            style: const TextStyle(
               fontWeight: FontWeight.w600,
             ),
           ),
