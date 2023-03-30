@@ -30,11 +30,11 @@ class VideoPost extends StatefulWidget {
 class _VideoPostState extends State<VideoPost>
     with SingleTickerProviderStateMixin {
   late VideoPlayerController _videoPlayerController =
-      VideoPlayerController.asset("assets/videos/test_video.mp4");
+      VideoPlayerController.asset("assets/videos/test_video_2.mp4");
 
   late final AnimationController _animationController;
 
-  bool _isPaused = false;
+  late bool _isPaused;
   final Duration _animationDuration = const Duration(milliseconds: 200);
 
   int _maxLines = 1;
@@ -61,6 +61,12 @@ class _VideoPostState extends State<VideoPost>
     //     .addListener(_onPlaybackConfigChanged);
 
     _onPlaybackConfigChanged();
+
+    if (context.read<PlaybackConfigViewModel>().autoPlay) {
+      _isPaused = false;
+    } else {
+      _isPaused = true;
+    }
   }
 
   @override
@@ -123,13 +129,19 @@ class _VideoPostState extends State<VideoPost>
     if (_videoPlayerController.value.isPlaying) {
       _videoPlayerController.pause();
       _animationController.reverse();
+      setState(() {
+        _isPaused = true;
+      });
     } else {
       _videoPlayerController.play();
       _animationController.forward();
+      setState(() {
+        _isPaused = false;
+      });
     }
-    setState(() {
-      _isPaused = !_isPaused;
-    });
+    // setState(() {
+    //   _isPaused = !_isPaused;
+    // });
   }
 
   void _onSeeMoreTap() {
