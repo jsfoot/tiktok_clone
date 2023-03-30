@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:tiktok_clone/common/widgets/video_configration/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
@@ -27,8 +27,10 @@ class VideoPost extends StatefulWidget {
   State<VideoPost> createState() => _VideoPostState();
 }
 
-class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMixin {
-  late VideoPlayerController _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video.mp4");
+class _VideoPostState extends State<VideoPost>
+    with SingleTickerProviderStateMixin {
+  late VideoPlayerController _videoPlayerController =
+      VideoPlayerController.asset("assets/videos/test_video.mp4");
 
   late final AnimationController _animationController;
 
@@ -39,7 +41,7 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
   bool _isSeeMoreClicked = false;
   String _seeMoreText = "See more";
 
-  bool _isMuted = false;
+  late bool _isMuted;
 
   @override
   void initState() {
@@ -53,6 +55,12 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
       value: 1.5,
       duration: _animationDuration,
     );
+
+    // context
+    //     .read<PlaybackConfigViewModel>()
+    //     .addListener(_onPlaybackConfigChanged);
+
+    _onPlaybackConfigChanged();
   }
 
   @override
@@ -61,16 +69,31 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
     super.dispose();
   }
 
+  void _onPlaybackConfigChanged() {
+    if (!mounted) return;
+    final muted = context.read<PlaybackConfigViewModel>().muted;
+
+    if (muted) {
+      _videoPlayerController.setVolume(0);
+      _isMuted = true;
+    } else {
+      _videoPlayerController.setVolume(1);
+      _isMuted = false;
+    }
+  }
+
   void _onVideoChanged() {
     if (_videoPlayerController.value.isInitialized) {
-      if (_videoPlayerController.value.duration == _videoPlayerController.value.position) {
+      if (_videoPlayerController.value.duration ==
+          _videoPlayerController.value.position) {
         widget.onVideoFinished();
       }
     }
   }
 
   void _initVideoPlayer() async {
-    _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video_1.mp4");
+    _videoPlayerController =
+        VideoPlayerController.asset("assets/videos/test_video_2.mp4");
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
     if (kIsWeb) {
@@ -83,8 +106,13 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
 
   void _onVisibilityChanged(VisibilityInfo info) {
     if (!mounted) return;
-    if (info.visibleFraction == 1 && !_isPaused && !_videoPlayerController.value.isPlaying) {
-      _videoPlayerController.play();
+    if (info.visibleFraction == 1 &&
+        !_isPaused &&
+        !_videoPlayerController.value.isPlaying) {
+      final autoplay = context.read<PlaybackConfigViewModel>().autoPlay;
+      if (autoplay) {
+        _videoPlayerController.play();
+      }
     }
     if (_videoPlayerController.value.isPlaying && info.visibleFraction == 0) {
       _onTogglePause();
@@ -140,7 +168,7 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
 
   void _onMuteTap() {
     if (_isMuted) {
-      _videoPlayerController.setVolume(1.0);
+      _videoPlayerController.setVolume(1);
     } else {
       _videoPlayerController.setVolume(0);
     }
@@ -196,11 +224,11 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
             left: Sizes.size20,
             top: Sizes.size32,
             child: IconButton(
-              onPressed: () {
-                context.read<VideoConfig>().toggleIsMuted();
-              },
+              onPressed: _onMuteTap,
               icon: FaIcon(
-                context.watch<VideoConfig>().isMuted ? FontAwesomeIcons.volumeOff : FontAwesomeIcons.volumeHigh,
+                _isMuted
+                    ? FontAwesomeIcons.volumeXmark
+                    : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
               ),
             ),
@@ -256,19 +284,13 @@ class _VideoPostState extends State<VideoPost> with SingleTickerProviderStateMix
             right: 10,
             child: Column(
               children: [
-                GestureDetector(
-                  onTap: _onMuteTap,
-                  child: VideoButton(
-                    icon: _isMuted || context.watch<VideoConfig>().isMuted ? FontAwesomeIcons.volumeXmark : FontAwesomeIcons.volumeHigh,
-                    text: _isMuted || context.watch<VideoConfig>().isMuted ? "" : "",
-                  ),
-                ),
                 Gaps.v6,
                 const CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
-                  foregroundImage: NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
+                  foregroundImage: NetworkImage(
+                      "https://avatars.githubusercontent.com/u/76519264?v=4"),
                   child: Text("진수"),
                 ),
                 Gaps.v24,

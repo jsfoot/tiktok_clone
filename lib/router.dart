@@ -6,12 +6,12 @@ import 'package:tiktok_clone/features/inbox/activity_screen.dart';
 import 'package:tiktok_clone/features/inbox/chat_detail_screen.dart';
 import 'package:tiktok_clone/features/inbox/chats_screen.dart';
 import 'package:tiktok_clone/features/onboarding/interests_screen.dart';
-import 'package:tiktok_clone/features/videos/widgets/video_recording_screen.dart';
 
 import 'features/authentication/login_screen.dart';
+import 'features/videos/views/video_recording_screen.dart';
 
 final router = GoRouter(
-  initialLocation: "/inbox",
+  initialLocation: "/home",
   routes: [
     GoRoute(
       name: SignUpScreen.routeName,

@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:tiktok_clone/common/widgets/video_configration/video_config.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
+import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -42,10 +42,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: ListView(
               children: [
                 SwitchListTile.adaptive(
-                  value: context.watch<VideoConfig>().isMuted,
-                  onChanged: (value) => context.read<VideoConfig>().toggleIsMuted(),
-                  title: const Text("Auto Mute"),
-                  subtitle: const Text("Videos muted by default."),
+                  value: context.watch<PlaybackConfigViewModel>().muted,
+                  onChanged: (value) => context.read<PlaybackConfigViewModel>().setMuted(value),
+                  title: const Text("Mute video"),
+                  subtitle: const Text("Video will be muted by default."),
+                ),
+                SwitchListTile.adaptive(
+                  value: context.watch<PlaybackConfigViewModel>().autoPlay,
+                  onChanged: (value) => context.read<PlaybackConfigViewModel>().setAutoPlay(value),
+                  title: const Text("Autoplay"),
+                  subtitle: const Text("Video will start playing automatically."),
                 ),
                 ListTile(
                   onTap: () async {
@@ -91,25 +97,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     "What is your birthday?",
                   ),
                 ),
-                const AboutListTile(),
                 CheckboxListTile(
                   title: const Text("Enable notifications"),
                   checkColor: Colors.white,
                   activeColor: Colors.black,
-                  value: _notifications,
-                  onChanged: _onNotificationsChanged,
-                ),
-                Switch(
-                  value: _notifications,
-                  onChanged: _onNotificationsChanged,
-                ),
-                Checkbox(
-                  checkColor: Colors.white,
-                  activeColor: Colors.black,
-                  value: _notifications,
-                  onChanged: _onNotificationsChanged,
-                ),
-                CupertinoSwitch(
                   value: _notifications,
                   onChanged: _onNotificationsChanged,
                 ),
@@ -119,10 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   value: _notifications,
                   onChanged: _onNotificationsChanged,
                 ),
-                Switch.adaptive(
-                  value: _notifications,
-                  onChanged: _onNotificationsChanged,
-                ),
+                const AboutListTile(),
                 ListTile(
                   onTap: () {
                     showCupertinoDialog(
