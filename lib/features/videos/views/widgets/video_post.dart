@@ -1,19 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
-import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
-import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
+import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
+import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../../generated/l10n.dart';
+import '../../../../generated/l10n.dart';
 
-class VideoPost extends StatefulWidget {
+class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
   final int index;
 
@@ -24,24 +24,22 @@ class VideoPost extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<VideoPost> createState() => _VideoPostState();
+  VideoPostState createState() => VideoPostState();
 }
 
-class _VideoPostState extends State<VideoPost>
-    with SingleTickerProviderStateMixin {
-  late VideoPlayerController _videoPlayerController =
-      VideoPlayerController.asset("assets/videos/test_video_2.mp4");
+class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderStateMixin {
+  late final VideoPlayerController _videoPlayerController;
+
+  final Duration _animationDuration = const Duration(milliseconds: 200);
 
   late final AnimationController _animationController;
 
   late bool _isPaused;
-  final Duration _animationDuration = const Duration(milliseconds: 200);
+  late bool _isMuted;
 
   int _maxLines = 1;
   bool _isSeeMoreClicked = false;
   String _seeMoreText = "See more";
-
-  late bool _isMuted;
 
   @override
   void initState() {
@@ -56,29 +54,26 @@ class _VideoPostState extends State<VideoPost>
       duration: _animationDuration,
     );
 
-    // context
-    //     .read<PlaybackConfigViewModel>()
-    //     .addListener(_onPlaybackConfigChanged);
-
-    _onPlaybackConfigChanged();
-
-    if (context.read<PlaybackConfigViewModel>().autoPlay) {
+    if (ref.read(playbackConfigProvider).autoPlay) {
       _isPaused = false;
     } else {
       _isPaused = true;
     }
+
+    _onPlaybackConfigChanged();
   }
 
   @override
   void dispose() {
     _videoPlayerController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   void _onPlaybackConfigChanged() {
     if (!mounted) return;
-    final muted = context.read<PlaybackConfigViewModel>().muted;
-
+    final muted = ref.read(playbackConfigProvider).muted;
+    // ref.read(playbackConfigProvider.notifier).setMuted(!muted);
     if (muted) {
       _videoPlayerController.setVolume(0);
       _isMuted = true;
@@ -90,33 +85,28 @@ class _VideoPostState extends State<VideoPost>
 
   void _onVideoChanged() {
     if (_videoPlayerController.value.isInitialized) {
-      if (_videoPlayerController.value.duration ==
-          _videoPlayerController.value.position) {
+      if (_videoPlayerController.value.duration == _videoPlayerController.value.position) {
         widget.onVideoFinished();
       }
     }
   }
 
   void _initVideoPlayer() async {
-    _videoPlayerController =
-        VideoPlayerController.asset("assets/videos/test_video_2.mp4");
+    _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video_2.mp4");
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
+
     if (kIsWeb) {
       await _videoPlayerController.setVolume(0);
     }
-    setState(() {
-      _videoPlayerController.addListener(_onVideoChanged);
-    });
+    _videoPlayerController.addListener(_onVideoChanged);
+    setState(() {});
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
     if (!mounted) return;
-    if (info.visibleFraction == 1 &&
-        !_isPaused &&
-        !_videoPlayerController.value.isPlaying) {
-      final autoplay = context.read<PlaybackConfigViewModel>().autoPlay;
-      if (autoplay) {
+    if (info.visibleFraction == 1 && !_isPaused && !_videoPlayerController.value.isPlaying) {
+      if (ref.read(playbackConfigProvider).autoPlay) {
         _videoPlayerController.play();
       }
     }
@@ -139,9 +129,6 @@ class _VideoPostState extends State<VideoPost>
         _isPaused = false;
       });
     }
-    // setState(() {
-    //   _isPaused = !_isPaused;
-    // });
   }
 
   void _onSeeMoreTap() {
@@ -238,9 +225,7 @@ class _VideoPostState extends State<VideoPost>
             child: IconButton(
               onPressed: _onMuteTap,
               icon: FaIcon(
-                _isMuted
-                    ? FontAwesomeIcons.volumeXmark
-                    : FontAwesomeIcons.volumeHigh,
+                _isMuted ? FontAwesomeIcons.volumeXmark : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
               ),
             ),
@@ -301,8 +286,7 @@ class _VideoPostState extends State<VideoPost>
                   radius: 25,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
-                  foregroundImage: NetworkImage(
-                      "https://avatars.githubusercontent.com/u/76519264?v=4"),
+                  foregroundImage: NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
                   child: Text("진수"),
                 ),
                 Gaps.v24,

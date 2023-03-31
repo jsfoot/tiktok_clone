@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
-import 'package:tiktok_clone/features/videos/widgets/video_post.dart';
+import 'package:tiktok_clone/features/videos/view_models/timeline_view_model.dart';
+import 'package:tiktok_clone/features/videos/views/widgets/video_post.dart';
 
-class VideoTimelineScreen extends StatefulWidget {
+class VideoTimelineScreen extends ConsumerStatefulWidget {
   const VideoTimelineScreen({Key? key}) : super(key: key);
 
   @override
-  State<VideoTimelineScreen> createState() => _VideoTimelineScreenState();
+  VideoTimelineScreenState createState() => VideoTimelineScreenState();
 }
 
-class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
+class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
   int _itemCount = 4;
   final PageController _pageController = PageController();
   final Duration _scrollDuration = const Duration(milliseconds: 250);
@@ -47,29 +49,42 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: _onRefresh,
-      displacement: 50.0,
-      edgeOffset: 20.0,
-      color: Theme.of(context).primaryColor,
-      child: PageView.builder(
-        controller: _pageController,
-        onPageChanged: _onPageChanged,
-        scrollDirection: Axis.vertical,
-        itemCount: _itemCount,
-        pageSnapping: true,
-        itemBuilder: (context, index) => Center(
-          child: Container(
-            constraints: const BoxConstraints(
-              maxWidth: Breakpoints.sm,
-            ),
-            child: VideoPost(
-              onVideoFinished: _onVideoFinished,
-              index: index,
+    return ref.watch(timelineProvider).when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          error: (error, stackTrace) => Center(
+            child: Text(
+              "Cloud not load videos: $error",
+              style: const TextStyle(
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
-      ),
-    );
+          data: (videos) => RefreshIndicator(
+            onRefresh: _onRefresh,
+            displacement: 50.0,
+            edgeOffset: 20.0,
+            color: Theme.of(context).primaryColor,
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              scrollDirection: Axis.vertical,
+              itemCount: videos.length,
+              pageSnapping: true,
+              itemBuilder: (context, index) => Center(
+                child: Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: Breakpoints.sm,
+                  ),
+                  child: VideoPost(
+                    onVideoFinished: _onVideoFinished,
+                    index: index,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
   }
 }
