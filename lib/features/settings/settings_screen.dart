@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
+import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -34,7 +36,8 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 SwitchListTile.adaptive(
                   value: ref.watch(playbackConfigProvider).autoPlay,
-                  onChanged: (value) => ref.read(playbackConfigProvider.notifier).setAutoPlay(value),
+                  onChanged: (value) =>
+                      ref.read(playbackConfigProvider.notifier).setAutoPlay(value),
                   title: const Text("Autoplay"),
                   subtitle: const Text("Video will start playing automatically."),
                 ),
@@ -103,7 +106,10 @@ class SettingsScreen extends ConsumerWidget {
                         content: const Text("Please don't go"),
                         actions: [
                           CupertinoDialogAction(
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () {
+                              ref.read(authRepo).signOut();
+                              context.go("/");
+                            },
                             child: const Text("Yes"),
                           ),
                           CupertinoDialogAction(
@@ -130,7 +136,10 @@ class SettingsScreen extends ConsumerWidget {
                         content: const Text("Please don't go"),
                         actions: [
                           IconButton(
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () {
+                              ref.read(authRepo).signOut();
+                              context.go("/");
+                            },
                             icon: const FaIcon(
                               FontAwesomeIcons.car,
                             ),
