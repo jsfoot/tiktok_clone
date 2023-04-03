@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/view_models/social_auth_view_model.dart';
 import 'package:tiktok_clone/features/authentication/widgets/auth_button.dart';
 import 'package:tiktok_clone/features/authentication/login_form_screen.dart';
 import 'package:tiktok_clone/utils.dart';
 
-class LogInScreen extends StatelessWidget {
+class LogInScreen extends ConsumerWidget {
   static String routeURL = "/login";
   static String routeName = "login";
 
@@ -28,7 +30,7 @@ class LogInScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return OrientationBuilder(
       builder: (context, orientation) {
         return Scaffold(
@@ -71,9 +73,12 @@ class LogInScreen extends StatelessWidget {
                           ),
                         ),
                         Gaps.v16,
-                        const AuthButton(
-                          icon: FaIcon(FontAwesomeIcons.apple),
-                          text: "Continue with Apple",
+                        GestureDetector(
+                          onTap: () => ref.read(socailAuthProvider.notifier).githubSignIn(context),
+                          child: const AuthButton(
+                            icon: FaIcon(FontAwesomeIcons.github),
+                            text: "Continue with Github",
+                          ),
                         ),
                       ],
                       if (orientation == Orientation.landscape)
@@ -89,10 +94,14 @@ class LogInScreen extends StatelessWidget {
                               ),
                             ),
                             Gaps.h16,
-                            const Expanded(
-                              child: AuthButton(
-                                icon: FaIcon(FontAwesomeIcons.apple),
-                                text: "Continue with Apple",
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () =>
+                                    ref.read(socailAuthProvider.notifier).githubSignIn(context),
+                                child: const AuthButton(
+                                  icon: FaIcon(FontAwesomeIcons.github),
+                                  text: "Continue with Github",
+                                ),
                               ),
                             ),
                           ],
