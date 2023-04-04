@@ -8,7 +8,7 @@ import 'package:tiktok_clone/features/discover/discover_screen.dart';
 import 'package:tiktok_clone/features/inbox/inbox_screen.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/nav_tab.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/post_video_button.dart';
-import 'package:tiktok_clone/features/users/user_profile_screen.dart';
+import 'package:tiktok_clone/features/users/views/user_profile_screen.dart';
 import 'package:tiktok_clone/utils.dart';
 
 import '../../../features/videos/views/video_recording_screen.dart';
@@ -73,7 +73,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           Offstage(
             offstage: _selectedIndex != 4,
             child: const UserProfileScreen(
-              username: "진수",
+              // username: "진수",
               tab: "",
             ),
           ),

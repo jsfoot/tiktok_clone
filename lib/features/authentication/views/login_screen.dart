@@ -5,27 +5,28 @@ import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/authentication/login_screen.dart';
-import 'package:tiktok_clone/features/authentication/username_screen.dart';
 import 'package:tiktok_clone/features/authentication/view_models/social_auth_view_model.dart';
-import 'package:tiktok_clone/features/authentication/widgets/auth_button.dart';
-import 'package:tiktok_clone/generated/l10n.dart';
+import 'package:tiktok_clone/features/authentication/views/widgets/auth_button.dart';
 import 'package:tiktok_clone/utils.dart';
 
-class SignUpScreen extends ConsumerWidget {
-  static const routeURL = "/";
-  static const routeName = "signup";
+import 'login_form_screen.dart';
 
-  const SignUpScreen({Key? key}) : super(key: key);
+class LogInScreen extends ConsumerWidget {
+  static String routeURL = "/login";
+  static String routeName = "login";
 
-  void _onLogInTap(BuildContext context) async {
-    context.pushNamed(LogInScreen.routeName);
+  const LogInScreen({Key? key}) : super(key: key);
+
+  void _onSignUpTap(BuildContext context) {
+    context.pop();
   }
 
-  void _onEmailTap(BuildContext context) {
+  void _onEmailLoginTap(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const UsernameScreen()),
+      MaterialPageRoute(
+        builder: (context) => const LoginFormScreen(),
+      ),
     );
   }
 
@@ -41,25 +42,23 @@ class SignUpScreen extends ConsumerWidget {
                   maxWidth: Breakpoints.lg,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Sizes.size40,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: Sizes.size40),
                   child: Column(
                     children: [
                       Gaps.v80,
-                      Text(
-                        S.of(context).signUpTitle("TikTok", DateTime.now()),
-                        style: const TextStyle(
+                      const Text(
+                        "Log in for TikTok",
+                        style: TextStyle(
                           fontSize: Sizes.size24,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Gaps.v20,
-                      Opacity(
+                      const Opacity(
                         opacity: 0.7,
                         child: Text(
-                          S.of(context).signUpSubtitle(2),
-                          style: const TextStyle(
+                          "Manage your account, check notifications, comment on videos, and more.",
+                          style: TextStyle(
                             fontSize: Sizes.size16,
                           ),
                           textAlign: TextAlign.center,
@@ -68,10 +67,10 @@ class SignUpScreen extends ConsumerWidget {
                       Gaps.v40,
                       if (orientation == Orientation.portrait) ...[
                         GestureDetector(
-                          onTap: () => _onEmailTap(context),
-                          child: AuthButton(
-                            icon: const FaIcon(FontAwesomeIcons.user),
-                            text: S.of(context).emailPasswordButton,
+                          onTap: () => _onEmailLoginTap(context),
+                          child: const AuthButton(
+                            icon: FaIcon(FontAwesomeIcons.user),
+                            text: "Use email & password",
                           ),
                         ),
                         Gaps.v16,
@@ -88,10 +87,10 @@ class SignUpScreen extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: GestureDetector(
-                                onTap: () => _onEmailTap(context),
-                                child: AuthButton(
-                                  icon: const FaIcon(FontAwesomeIcons.user),
-                                  text: S.of(context).emailPasswordButton,
+                                onTap: () => _onEmailLoginTap(context),
+                                child: const AuthButton(
+                                  icon: FaIcon(FontAwesomeIcons.user),
+                                  text: "Use email & password",
                                 ),
                               ),
                             ),
@@ -124,12 +123,14 @@ class SignUpScreen extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(S.of(context).alreadyHaveAnAccount),
+                  const Text(
+                    "Don't have an account?",
+                  ),
                   Gaps.h5,
                   GestureDetector(
-                    onTap: () => _onLogInTap(context),
+                    onTap: () => _onSignUpTap(context),
                     child: Text(
-                      S.of(context).logIn("female"),
+                      "Sign up",
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.w600,
