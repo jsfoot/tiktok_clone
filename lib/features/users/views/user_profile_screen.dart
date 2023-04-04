@@ -7,6 +7,7 @@ import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/settings/settings_screen.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
+import 'package:tiktok_clone/features/users/views/update_profile_screen.dart';
 import 'package:tiktok_clone/features/users/views/widgets/avatar.dart';
 import 'package:tiktok_clone/features/users/views/widgets/persistent_icon_bar.dart';
 import 'package:tiktok_clone/features/users/views/widgets/persistent_tab_bar.dart';
@@ -34,9 +35,17 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     );
   }
 
+  void _onPersonPressed() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const UpdateProfileScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final bio = ref.read(usersProvider).value!.bio;
+    final link = ref.read(usersProvider).value!.link;
 
     return ref.watch(usersProvider).when(
           error: (error, stackTrace) => Center(
@@ -63,6 +72,13 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                             title: Text(data.name),
                             centerTitle: true,
                             actions: [
+                              IconButton(
+                                onPressed: _onPersonPressed,
+                                icon: const Icon(
+                                  Icons.person_2_outlined,
+                                  size: Sizes.size20,
+                                ),
+                              ),
                               IconButton(
                                 onPressed: _onGearPressed,
                                 icon: const FaIcon(
@@ -252,27 +268,27 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                     ),
                                   ),
                                   Gaps.v10,
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
                                       horizontal: Sizes.size32,
                                     ),
                                     child: Text(
-                                      "All highlights and where to watch live matches on blar blar blar~~ it is a very very long text",
+                                      bio,
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
                                   Gaps.v14,
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      FaIcon(
+                                    children: [
+                                      const FaIcon(
                                         FontAwesomeIcons.link,
                                         size: Sizes.size12,
                                       ),
                                       Gaps.h4,
                                       Text(
-                                        "https://github.com/jsfoot/",
-                                        style: TextStyle(
+                                        link,
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -485,15 +501,15 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                   Gaps.v8,
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      FaIcon(
+                                    children: [
+                                      const FaIcon(
                                         FontAwesomeIcons.link,
                                         size: Sizes.size12,
                                       ),
                                       Gaps.h4,
                                       Text(
-                                        "https://github.com/jsfoot/",
-                                        style: TextStyle(
+                                        link,
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
