@@ -19,7 +19,8 @@ class VideoRecordingScreen extends StatefulWidget {
   State<VideoRecordingScreen> createState() => _VideoRecordingScreenState();
 }
 
-class _VideoRecordingScreenState extends State<VideoRecordingScreen> with TickerProviderStateMixin, WidgetsBindingObserver {
+class _VideoRecordingScreenState extends State<VideoRecordingScreen>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   bool _hasPermission = false;
   bool _isSelfieMode = false;
 
@@ -276,19 +277,22 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> with Ticker
                         ),
                         Gaps.v10,
                         IconButton(
-                          color: _flashMode == FlashMode.always ? Colors.amber.shade200 : Colors.white,
+                          color:
+                              _flashMode == FlashMode.always ? Colors.amber.shade200 : Colors.white,
                           onPressed: () => _setFlashMode(FlashMode.always),
                           icon: const Icon(Icons.flash_on_rounded),
                         ),
                         Gaps.v10,
                         IconButton(
-                          color: _flashMode == FlashMode.auto ? Colors.amber.shade200 : Colors.white,
+                          color:
+                              _flashMode == FlashMode.auto ? Colors.amber.shade200 : Colors.white,
                           onPressed: () => _setFlashMode(FlashMode.auto),
                           icon: const Icon(Icons.flash_auto_rounded),
                         ),
                         Gaps.v10,
                         IconButton(
-                          color: _flashMode == FlashMode.torch ? Colors.amber.shade200 : Colors.white,
+                          color:
+                              _flashMode == FlashMode.torch ? Colors.amber.shade200 : Colors.white,
                           onPressed: () => _setFlashMode(FlashMode.torch),
                           icon: const Icon(Icons.flashlight_on_rounded),
                         ),

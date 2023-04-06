@@ -53,6 +53,17 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
               key: _formKey,
               child: Column(
                 children: [
+                  Gaps.v20,
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: const Text(
+                      "Bio",
+                      style: TextStyle(
+                        fontSize: Sizes.size20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                   TextFormField(
                     initialValue: bio,
                     keyboardType: TextInputType.text,
@@ -65,7 +76,17 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen> {
                       }
                     },
                   ),
-                  Gaps.v28,
+                  Gaps.v32,
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: const Text(
+                      "Link",
+                      style: TextStyle(
+                        fontSize: Sizes.size20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                   TextFormField(
                     initialValue: link,
                     keyboardType: TextInputType.text,

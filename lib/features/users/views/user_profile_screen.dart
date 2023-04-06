@@ -44,8 +44,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final bio = ref.read(usersProvider).value!.bio;
-    final link = ref.read(usersProvider).value!.link;
+    final bio = ref.read(usersProvider).value?.bio;
+    final link = ref.read(usersProvider).value?.link;
 
     return ref.watch(usersProvider).when(
           error: (error, stackTrace) => Center(
@@ -273,7 +273,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       horizontal: Sizes.size32,
                                     ),
                                     child: Text(
-                                      bio,
+                                      bio ?? "undifined",
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -287,7 +287,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       ),
                                       Gaps.h4,
                                       Text(
-                                        link,
+                                        link ?? "undifined",
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -508,7 +508,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       ),
                                       Gaps.h4,
                                       Text(
-                                        link,
+                                        link ?? "undifined",
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                         ),
