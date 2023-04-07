@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/view_models/upload_video_view_model.dart';
 import 'package:video_player/video_player.dart';
 
@@ -87,7 +88,26 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
         ],
         title: const Text("Preview video"),
       ),
-      body: _videoPlayerController.value.isInitialized ? VideoPlayer(_videoPlayerController) : null,
+      body: Stack(
+        children: [
+          Positioned.fill(
+              child: _videoPlayerController.value.isInitialized
+                  ? VideoPlayer(_videoPlayerController)
+                  : const Text("Not initialized video player")),
+          Positioned(
+            bottom: 30,
+            left: MediaQuery.of(context).size.width / 3,
+            right: MediaQuery.of(context).size.width / 3,
+            child: Container(
+              color: Colors.white,
+              width: Sizes.size20,
+              child: const Text(
+                "sdfsdasdfasdasdasdfasdf",
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

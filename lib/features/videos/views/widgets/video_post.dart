@@ -1,26 +1,32 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/features/videos/models/video_model.dart';
+import 'package:tiktok_clone/features/videos/view_models/video_post_view_model.dart';
+import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
-import 'package:video_player/video_player.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../../generated/l10n.dart';
 
 class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
   final int index;
+  final VideoModel videoData;
 
   const VideoPost({
     Key? key,
     required this.onVideoFinished,
     required this.index,
+    required this.videoData,
   }) : super(key: key);
 
   @override
@@ -176,6 +182,10 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
     });
   }
 
+  void _onLikeTap() {
+    ref.read(videoPostProvider(widget.videoData.id).notifier).likeVideo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
@@ -186,8 +196,9 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
           Positioned.fill(
             child: _videoPlayerController.value.isInitialized
                 ? VideoPlayer(_videoPlayerController)
-                : Container(
-                    color: Colors.black,
+                : Image.network(
+                    widget.videoData.thumbnailUrl,
+                    fit: BoxFit.cover,
                   ),
           ),
           Positioned.fill(
@@ -236,9 +247,9 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "@진수",
-                  style: TextStyle(
+                Text(
+                  "@${widget.videoData.creator}",
+                  style: const TextStyle(
                     fontSize: Sizes.size20,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -247,11 +258,11 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                 Gaps.v10,
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
-                      width: 230,
                       child: Text(
-                        "This is a train in Trinidad, Cuba!! This is a train in Trinidad, Cuba!! This is a train in Trinidad, Cuba!! This is a train in Trinidad, Cuba!!",
+                        widget.videoData.description,
                         style: const TextStyle(
                           fontSize: Sizes.size16,
                           color: Colors.white,
@@ -260,6 +271,7 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                         maxLines: _maxLines,
                       ),
                     ),
+                    Gaps.h10,
                     GestureDetector(
                       onTap: _onSeeMoreTap,
                       child: Text(
@@ -282,24 +294,28 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
             child: Column(
               children: [
                 Gaps.v6,
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
-                  foregroundImage: NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
-                  child: Text("진수"),
+                  foregroundImage: NetworkImage(
+                      "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media&"),
+                  child: Text(widget.videoData.creator),
                 ),
                 Gaps.v24,
-                VideoButton(
-                  icon: FontAwesomeIcons.solidHeart,
-                  text: S.of(context).likeCount(3215456854),
+                GestureDetector(
+                  onTap: _onLikeTap,
+                  child: VideoButton(
+                    icon: FontAwesomeIcons.solidHeart,
+                    text: S.of(context).likeCount(widget.videoData.likes),
+                  ),
                 ),
                 Gaps.v24,
                 GestureDetector(
                   onTap: () => _onCommentsTap(context),
                   child: VideoButton(
                     icon: FontAwesomeIcons.solidComment,
-                    text: S.of(context).commentCount(5132),
+                    text: S.of(context).commentCount(widget.videoData.comments),
                   ),
                 ),
                 Gaps.v24,

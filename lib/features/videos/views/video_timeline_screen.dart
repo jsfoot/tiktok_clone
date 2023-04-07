@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/features/videos/view_models/timeline_view_model.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_post.dart';
 
@@ -12,7 +11,7 @@ class VideoTimelineScreen extends ConsumerStatefulWidget {
 }
 
 class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
-  int _itemCount = 4;
+  int _itemCount = 0;
   final PageController _pageController = PageController();
   final Duration _scrollDuration = const Duration(milliseconds: 250);
   final Curve _scrollCurve = Curves.linear;
@@ -24,8 +23,7 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
       curve: _scrollCurve,
     );
     if (page == _itemCount - 1) {
-      _itemCount = _itemCount + 4;
-      setState(() {});
+      ref.watch(timelineProvider.notifier).fetchNextPage();
     }
   }
 
@@ -43,8 +41,8 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
     super.dispose();
   }
 
-  Future<dynamic> _onRefresh() {
-    return Future.delayed(const Duration(seconds: 2));
+  Future<void> _onRefresh() {
+    return ref.watch(timelineProvider.notifier).refresh();
   }
 
   @override
@@ -61,30 +59,31 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
               ),
             ),
           ),
-          data: (videos) => RefreshIndicator(
-            onRefresh: _onRefresh,
-            displacement: 50.0,
-            edgeOffset: 20.0,
-            color: Theme.of(context).primaryColor,
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              scrollDirection: Axis.vertical,
-              itemCount: videos.length,
-              pageSnapping: true,
-              itemBuilder: (context, index) => Center(
-                child: Container(
-                  constraints: const BoxConstraints(
-                    maxWidth: Breakpoints.sm,
-                  ),
-                  child: VideoPost(
+          data: (videos) {
+            _itemCount = videos.length;
+
+            return RefreshIndicator(
+              onRefresh: _onRefresh,
+              displacement: 50.0,
+              edgeOffset: 20.0,
+              color: Theme.of(context).primaryColor,
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: _onPageChanged,
+                scrollDirection: Axis.vertical,
+                itemCount: videos.length,
+                pageSnapping: true,
+                itemBuilder: (context, index) {
+                  final videoData = videos[index];
+                  return VideoPost(
                     onVideoFinished: _onVideoFinished,
                     index: index,
-                  ),
-                ),
+                    videoData: videoData,
+                  );
+                },
               ),
-            ),
-          ),
+            );
+          },
         );
   }
 }
