@@ -6,7 +6,7 @@ class VideoModel {
   final String thumbnailUrl;
   final String creatorUid;
   final String creator;
-  final String id;
+  final String videoId;
   final int likes;
   final int comments;
   final int createdAt;
@@ -18,7 +18,7 @@ class VideoModel {
     required this.thumbnailUrl,
     required this.creatorUid,
     required this.creator,
-    required this.id,
+    required this.videoId,
     required this.likes,
     required this.comments,
     required this.createdAt,
@@ -33,7 +33,7 @@ class VideoModel {
         thumbnailUrl = json["thumbnailUrl"],
         creatorUid = json["creatorUid"],
         creator = json["creator"],
-        id = videoId,
+        videoId = json["videoId"],
         likes = json["likes"],
         comments = json["comments"],
         createdAt = json["createdAt"];
@@ -46,10 +46,36 @@ class VideoModel {
       "thumbnailUrl": thumbnailUrl,
       "creatorUid": creatorUid,
       "creator": creator,
-      "id": id,
+      "videoId": videoId,
       "likes": likes,
       "comments": comments,
       "createdAt": createdAt,
     };
+  }
+
+  VideoModel copyWith({
+    String? title,
+    String? description,
+    String? fileUrl,
+    String? thumbnailUrl,
+    String? creatorUid,
+    String? creator,
+    String? videoId,
+    int? likes,
+    int? comments,
+    int? createdAt,
+  }) {
+    return VideoModel(
+      title: title ?? this.title,
+      description: description ?? this.description,
+      fileUrl: fileUrl ?? this.fileUrl,
+      thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
+      creatorUid: creatorUid ?? this.creatorUid,
+      creator: creator ?? this.creator,
+      videoId: videoId ?? this.videoId,
+      likes: likes ?? this.likes,
+      comments: comments ?? this.comments,
+      createdAt: createdAt ?? this.createdAt,
+    );
   }
 }

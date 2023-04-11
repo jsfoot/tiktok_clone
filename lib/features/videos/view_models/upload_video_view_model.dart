@@ -30,10 +30,11 @@ class UploadVideoViewModel extends AsyncNotifier<void> {
               title: "From Flutter!",
               description: "Hell yeah!",
               fileUrl: await task.ref.getDownloadURL(),
-              thumbnailUrl: "",
+              thumbnailUrl:
+                  "https://steamuserimages-a.akamaihd.net/ugc/1644340994747007967/853B20CD7694F5CF40E83AAC670572A3FE1E3D35/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
               creatorUid: user.uid,
               creator: userProfile.name,
-              id: "",
+              videoId: "",
               likes: 0,
               comments: 0,
               createdAt: DateTime.now().millisecondsSinceEpoch,

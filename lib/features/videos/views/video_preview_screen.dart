@@ -35,7 +35,7 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
 
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
-    // await _videoPlayerController.play();
+    await _videoPlayerController.play();
 
     setState(() {});
   }

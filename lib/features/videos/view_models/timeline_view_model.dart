@@ -24,8 +24,6 @@ class TimelineVieWModel extends AsyncNotifier<List<VideoModel>> {
   FutureOr<List<VideoModel>> build() async {
     _repository = ref.read(videosRepo);
     _list = await _fetchVideos(lastItemCreatedAt: null);
-    // print("---------------------------------------------");
-    // print(_list.first.fileUrl.toString());
     return _list;
   }
 

@@ -2,7 +2,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_scale_tap/flutter_scale_tap.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 import 'package:tiktok_clone/features/videos/models/video_model.dart';
 import 'package:tiktok_clone/features/videos/view_models/video_post_view_model.dart';
 import 'package:video_player/video_player.dart';
@@ -14,8 +16,6 @@ import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
-
-import '../../../../generated/l10n.dart';
 
 class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
@@ -42,6 +42,9 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
 
   late bool _isPaused;
   late bool _isMuted;
+  bool _isLiked = false;
+  Map<String, dynamic> _videoInfo = {};
+  late int _likeCounts = 0;
 
   int _maxLines = 1;
   bool _isSeeMoreClicked = false;
@@ -67,6 +70,10 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
     }
 
     _onPlaybackConfigChanged();
+
+    _isLike();
+
+    _getVideoInfo();
   }
 
   @override
@@ -119,6 +126,12 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
     if (_videoPlayerController.value.isPlaying && info.visibleFraction == 0) {
       _onTogglePause();
     }
+
+    _isLike();
+
+    _getVideoInfo();
+
+    setState(() {});
   }
 
   void _onTogglePause() {
@@ -183,11 +196,36 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
   }
 
   void _onLikeTap() {
-    ref.read(videoPostProvider(widget.videoData.id).notifier).likeVideo();
+    ref.read(videoPostProvider(widget.videoData.videoId).notifier).likeVideo();
+
+    if (_isLiked) {
+      _likeCounts -= 1;
+    } else {
+      _likeCounts += 1;
+    }
+    _isLiked = !_isLiked;
+
+    setState(() {});
+  }
+
+  Future<void> _isLike() async {
+    final isLiked = await ref.read(videoPostProvider(widget.videoData.videoId).notifier).isLiked();
+    _isLiked = isLiked;
+  }
+
+  Future<void> _getVideoInfo() async {
+    final videoInfo =
+        await ref.read(videoPostProvider(widget.videoData.videoId).notifier).getVideoInfo();
+    _videoInfo = videoInfo;
+    _likeCounts = _videoInfo["likes"];
   }
 
   @override
   Widget build(BuildContext context) {
+    final hasAvatar = ref.read(usersProvider).value!.hasAvatar;
+    final likesCounts = _likeCounts;
+    final commentsCounts = _videoInfo["comments"].toString();
+
     return VisibilityDetector(
       key: Key("${widget.index}"),
       onVisibilityChanged: _onVisibilityChanged,
@@ -298,30 +336,43 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                   radius: 25,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
-                  foregroundImage: NetworkImage(
-                      "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media&"),
+                  foregroundImage: hasAvatar
+                      ? NetworkImage(
+                          "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media&")
+                      : null,
                   child: Text(widget.videoData.creator),
                 ),
                 Gaps.v24,
-                GestureDetector(
-                  onTap: _onLikeTap,
+                ScaleTap(
+                  onPressed: _onLikeTap,
+                  onLongPress: _onLikeTap,
+                  duration: const Duration(milliseconds: 300),
+                  scaleCurve: Curves.fastOutSlowIn,
+                  scaleMinValue: 1.7,
                   child: VideoButton(
+                    color: _isLiked ? Theme.of(context).primaryColor : Colors.white,
                     icon: FontAwesomeIcons.solidHeart,
-                    text: S.of(context).likeCount(widget.videoData.likes),
+                    text: likesCounts.toString(),
                   ),
                 ),
                 Gaps.v24,
                 GestureDetector(
                   onTap: () => _onCommentsTap(context),
                   child: VideoButton(
+                    color: Colors.white,
                     icon: FontAwesomeIcons.solidComment,
-                    text: S.of(context).commentCount(widget.videoData.comments),
+                    text: commentsCounts,
+                    // text: S.of(context).commentCount(widget.videoData.comments),
                   ),
                 ),
                 Gaps.v24,
-                const VideoButton(
-                  icon: FontAwesomeIcons.share,
-                  text: "Share",
+                GestureDetector(
+                  onTap: () {},
+                  child: const VideoButton(
+                    color: Colors.white,
+                    icon: FontAwesomeIcons.share,
+                    text: "Share",
+                  ),
                 ),
               ],
             ),

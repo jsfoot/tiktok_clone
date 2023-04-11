@@ -29,16 +29,36 @@ class VideosRepository {
     }
   }
 
+  Future<Map<String, dynamic>> getVideoInfo(String videoId) async {
+    final query = await _db.collection("videos").doc(videoId).get();
+    final videoInfo = query.data()!;
+    return videoInfo;
+  }
+
   Future<void> likeVideo(String videoId, String userId) async {
-    final query = _db.collection("likes").doc("${videoId}000$userId");
-    final like = await query.get();
+    final likeQuery = _db.collection("likes").doc("${videoId}000$userId");
+    final like = await likeQuery.get();
 
     if (!like.exists) {
-      await query.set({
+      await likeQuery.set({
         "createdAt": DateTime.now().microsecondsSinceEpoch,
+        "uid": userId,
+        "videoID": videoId,
       });
     } else {
-      query.delete();
+      likeQuery.delete();
+    }
+
+    final userLikeQuery = _db.collection("users").doc(userId).collection("likes").doc(videoId);
+    final userLike = await userLikeQuery.get();
+
+    if (!userLike.exists) {
+      await userLikeQuery.set({
+        "createdAt": DateTime.now().microsecondsSinceEpoch,
+        "videoID": videoId,
+      });
+    } else {
+      userLikeQuery.delete();
     }
   }
 }

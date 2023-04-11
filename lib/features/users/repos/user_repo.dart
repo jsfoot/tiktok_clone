@@ -26,6 +26,11 @@ class UserRepository {
   Future<void> updateUser(String uid, Map<String, dynamic> data) async {
     await _db.collection("users").doc(uid).update(data);
   }
+
+  Future<bool> getIsLiked(String uid, String videoId) async {
+    final likes = await _db.collection("users").doc(uid).collection("likes").doc(videoId).get();
+    return likes.exists;
+  }
 }
 
 final userRepo = Provider((ref) => UserRepository());
