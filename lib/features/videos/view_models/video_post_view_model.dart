@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/users/repos/user_repo.dart';
+import 'package:tiktok_clone/features/videos/models/video_model.dart';
 import 'package:tiktok_clone/features/videos/repos/videos_repo.dart';
 
 class VideoPostViewModel extends FamilyAsyncNotifier<void, String> {
@@ -17,9 +18,9 @@ class VideoPostViewModel extends FamilyAsyncNotifier<void, String> {
     _userRepository = ref.read(userRepo);
   }
 
-  Future<void> likeVideo() async {
+  Future<void> likeVideo(VideoModel videoData) async {
     final user = ref.read(authRepo).user;
-    await _videoRepository.likeVideo(_videoId, user!.uid);
+    await _videoRepository.likeVideo(_videoId, user!.uid, videoData);
   }
 
   Future<bool> isLiked() async {

@@ -3,7 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/inbox/chat_detail_screen.dart';
+
+import 'chat_detail_screen.dart';
 
 class ChatsScreen extends StatefulWidget {
   static const String routeName = "chats";
@@ -66,7 +67,8 @@ class _ChatsScreenState extends State<ChatsScreen> {
       onLongPress: () => _deleteItem(index),
       leading: const CircleAvatar(
         radius: 30,
-        foregroundImage: NetworkImage("https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg"),
+        foregroundImage:
+            NetworkImage("https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg"),
         child: Text("원영"),
       ),
       title: Row(

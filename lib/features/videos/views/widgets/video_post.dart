@@ -196,7 +196,7 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
   }
 
   void _onLikeTap() {
-    ref.read(videoPostProvider(widget.videoData.videoId).notifier).likeVideo();
+    ref.read(videoPostProvider(widget.videoData.videoId).notifier).likeVideo(widget.videoData);
 
     if (_isLiked) {
       _likeCounts -= 1;

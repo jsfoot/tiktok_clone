@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
+import 'package:tiktok_clone/features/inbox/view_models/messages_view_model.dart';
 import 'package:tiktok_clone/utils.dart';
 
-class ChatDetailScreen extends StatefulWidget {
+class ChatDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = "chatDetail";
   static const String routeURL = ":chatId";
 
@@ -17,10 +20,12 @@ class ChatDetailScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+  ConsumerState<ChatDetailScreen> createState() => _ChatDetailScreenState();
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
+  final TextEditingController _textEditingController = TextEditingController();
+
   bool _isWriting = false;
 
   void _onStartWriting() {
@@ -36,8 +41,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     });
   }
 
+  void _onSendPressed() {
+    final text = _textEditingController.text;
+    if (text == "") {
+      return;
+    }
+    ref.read(messagesProvider.notifier).sendMessage(text);
+    _textEditingController.text = "";
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.read(messagesProvider).isLoading;
+
     final width = MediaQuery.of(context).size.width;
     final isDark = isDarkMode(context);
 
@@ -52,7 +68,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             children: [
               const CircleAvatar(
                 radius: Sizes.size24,
-                foregroundImage: NetworkImage("https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg"),
+                foregroundImage: NetworkImage(
+                    "https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg"),
                 child: Text("원영"),
               ),
               Positioned(
@@ -109,42 +126,56 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             ),
             child: Stack(
               children: [
-                ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: Sizes.size20,
-                    horizontal: Sizes.size14,
-                  ),
-                  itemBuilder: (context, index) {
-                    final isMine = index % 2 == 1;
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(Sizes.size14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: const Radius.circular(Sizes.size20),
-                              topRight: const Radius.circular(Sizes.size20),
-                              bottomLeft: Radius.circular(isMine ? Sizes.size20 : Sizes.size5),
-                              bottomRight: Radius.circular(isMine ? Sizes.size5 : Sizes.size20),
-                            ),
-                            color: isMine ? Colors.blue : Theme.of(context).primaryColor,
+                ref.watch(chatProvider).when(
+                      loading: () => const Center(child: CircularProgressIndicator()),
+                      error: (error, stackTrace) => Center(child: Text(error.toString())),
+                      data: (data) {
+                        return ListView.separated(
+                          // reverse: true,
+                          padding: EdgeInsets.only(
+                            bottom:
+                                MediaQuery.of(context).padding.bottom + Sizes.size96 + Sizes.size10,
+                            top: Sizes.size20,
+                            left: Sizes.size14,
+                            right: Sizes.size14,
                           ),
-                          child: Text(
-                            isMine ? "응!" : "오빠!",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: Sizes.size16,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                  separatorBuilder: (context, index) => Gaps.v10,
-                  itemCount: 10,
-                ),
+                          separatorBuilder: (context, index) => Gaps.v10,
+                          itemCount: data.length,
+                          itemBuilder: (context, index) {
+                            final message = data[index];
+                            final isMine = message.userId == ref.watch(authRepo).user!.uid;
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment:
+                                  isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(Sizes.size14),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: const Radius.circular(Sizes.size20),
+                                      topRight: const Radius.circular(Sizes.size20),
+                                      bottomLeft:
+                                          Radius.circular(isMine ? Sizes.size20 : Sizes.size5),
+                                      bottomRight:
+                                          Radius.circular(isMine ? Sizes.size5 : Sizes.size20),
+                                    ),
+                                    color: isMine ? Colors.blue : Theme.of(context).primaryColor,
+                                  ),
+                                  child: Text(
+                                    message.text,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: Sizes.size16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
                 Positioned(
                   bottom: 0,
                   width: width < Breakpoints.lg ? width : Breakpoints.lg,
@@ -248,6 +279,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   color: Theme.of(context).appBarTheme.backgroundColor,
                                   height: Sizes.size40,
                                   child: TextField(
+                                    controller: _textEditingController,
                                     onTap: _onStartWriting,
                                     maxLines: 5,
                                     minLines: 1,
@@ -293,17 +325,23 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                 ),
                               ),
                               Gaps.h8,
-                              CircleAvatar(
-                                radius: 18,
-                                backgroundColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
-                                    right: Sizes.size3,
-                                  ),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.solidPaperPlane,
-                                    color: Colors.white,
-                                    size: Sizes.size20,
+                              GestureDetector(
+                                onTap: isLoading ? null : _onSendPressed,
+                                child: CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor:
+                                      isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: Sizes.size3,
+                                    ),
+                                    child: FaIcon(
+                                      isLoading
+                                          ? FontAwesomeIcons.hourglass
+                                          : FontAwesomeIcons.solidPaperPlane,
+                                      color: Colors.white,
+                                      size: Sizes.size20,
+                                    ),
                                   ),
                                 ),
                               ),
