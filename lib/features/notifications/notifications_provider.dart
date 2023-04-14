@@ -15,8 +15,9 @@ class NotificationsProvider extends FamilyAsyncNotifier<void, BuildContext> {
 
   Future<void> updateToken(String token) async {
     final user = ref.read(authRepo).user;
+    if (user == null) return;
 
-    await _db.collection("users").doc(user!.uid).update(
+    await _db.collection("users").doc(user.uid).update(
       {"token": token},
     );
   }
@@ -47,7 +48,7 @@ class NotificationsProvider extends FamilyAsyncNotifier<void, BuildContext> {
   }
 
   @override
-  FutureOr build(BuildContext context) async {
+  FutureOr<void> build(BuildContext context) async {
     final token = await _messaging.getToken();
     if (token == null) return;
     await updateToken(token);
