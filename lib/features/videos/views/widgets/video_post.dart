@@ -338,7 +338,8 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                   foregroundColor: Colors.white,
                   foregroundImage: hasAvatar
                       ? NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media&")
+                          "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media&",
+                        )
                       : null,
                   child: Text(widget.videoData.creator),
                 ),

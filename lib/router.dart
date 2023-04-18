@@ -10,6 +10,7 @@ import 'features/authentication/views/login_screen.dart';
 import 'features/authentication/views/sign_up_screen.dart';
 import 'features/inbox/views/activity_screen.dart';
 import 'features/inbox/views/chat_detail_screen.dart';
+import 'features/inbox/views/chat_user_list_screen.dart';
 import 'features/inbox/views/chats_screen.dart';
 import 'features/notifications/notifications_provider.dart';
 import 'features/videos/views/video_recording_screen.dart';
@@ -66,18 +67,22 @@ final routerProvider = Provider((ref) {
               name: ChatsScreen.routeName,
               path: ChatsScreen.routeURL,
               builder: (context, state) => const ChatsScreen(),
-              routes: [
-                GoRoute(
-                  path: ChatDetailScreen.routeURL,
-                  name: ChatDetailScreen.routeName,
-                  builder: (context, state) {
-                    final chatId = state.params["chatId"]!;
-                    return ChatDetailScreen(
-                      chatId: chatId,
-                    );
-                  },
-                ),
-              ],
+            ),
+            GoRoute(
+              path: ChatDetailScreen.routeURL,
+              name: ChatDetailScreen.routeName,
+              builder: (context, state) {
+                final extra = state.extra as Map;
+                return ChatDetailScreen(
+                  chatRoomId: extra['chatRoomId'],
+                  yourUid: extra['yourUid'],
+                );
+              },
+            ),
+            GoRoute(
+              path: ChatUserListScreen.routeURL,
+              name: ChatUserListScreen.routeName,
+              builder: (context, state) => const ChatUserListScreen(),
             ),
             GoRoute(
               path: VideoRecordingScreen.routeURL,

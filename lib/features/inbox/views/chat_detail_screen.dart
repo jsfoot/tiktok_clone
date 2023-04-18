@@ -1,22 +1,27 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/inbox/view_models/messages_view_model.dart';
+import 'package:tiktok_clone/features/users/repos/user_repo.dart';
 import 'package:tiktok_clone/utils.dart';
 
 class ChatDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = "chatDetail";
-  static const String routeURL = ":chatId";
+  static const String routeURL = "/chatDetail";
 
-  final String chatId;
+  final String chatRoomId;
+  final String yourUid;
 
   const ChatDetailScreen({
     Key? key,
-    required this.chatId,
+    required this.chatRoomId,
+    required this.yourUid,
   }) : super(key: key);
 
   @override
@@ -46,13 +51,14 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     if (text == "") {
       return;
     }
-    ref.read(messagesProvider.notifier).sendMessage(text);
+    ref.read(messagesProvider(widget.chatRoomId).notifier).sendMessage(text);
     _textEditingController.text = "";
   }
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.read(messagesProvider).isLoading;
+    final isLoading = ref.read(messagesProvider(widget.chatRoomId)).isLoading;
+    Future<Map<String, dynamic>?> userProfile = ref.read(userRepo).findProfile(widget.yourUid);
 
     final width = MediaQuery.of(context).size.width;
     final isDark = isDarkMode(context);
@@ -61,60 +67,129 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        title: ListTile(
-          contentPadding: EdgeInsets.zero,
-          horizontalTitleGap: Sizes.size8,
-          leading: Stack(
-            children: [
-              const CircleAvatar(
-                radius: Sizes.size24,
-                foregroundImage: NetworkImage(
-                    "https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg"),
-                child: Text("원영"),
-              ),
-              Positioned(
-                top: Sizes.size32,
-                left: Sizes.size32,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Sizes.size2,
-                    vertical: Sizes.size2,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(100),
+        title: FutureBuilder(
+          future: userProfile,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                horizontalTitleGap: Sizes.size8,
+                leading: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: Sizes.size24,
+                      foregroundImage: NetworkImage(
+                          "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.yourUid}?alt=media&"
+                          // "https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg",
+                          ),
+                      child: Text(
+                        snapshot.data!['name'],
+                      ),
                     ),
-                    color: isDark ? null : Colors.grey.shade50,
-                  ),
-                  child: const Icon(
-                    Icons.circle,
-                    color: Colors.green,
-                    size: Sizes.size14,
+                    Positioned(
+                      top: Sizes.size32,
+                      left: Sizes.size32,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: Sizes.size2,
+                          vertical: Sizes.size2,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(100),
+                          ),
+                          color: isDark ? null : Colors.grey.shade50,
+                        ),
+                        child: const Icon(
+                          Icons.circle,
+                          color: Colors.green,
+                          size: Sizes.size14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                title: Text(
+                  snapshot.data!['name'],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ),
-            ],
-          ),
-          title: Text(
-            "원영(${widget.chatId})",
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          subtitle: const Text("Active now"),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              FaIcon(
-                FontAwesomeIcons.flag,
-                size: Sizes.size20,
-              ),
-              Gaps.h32,
-              FaIcon(
-                FontAwesomeIcons.ellipsis,
-              )
-            ],
-          ),
+                subtitle: const Text("Active now"),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    FaIcon(
+                      FontAwesomeIcons.flag,
+                      size: Sizes.size20,
+                    ),
+                    Gaps.h32,
+                    FaIcon(
+                      FontAwesomeIcons.ellipsis,
+                    )
+                  ],
+                ),
+              );
+            } else {
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                horizontalTitleGap: Sizes.size8,
+                leading: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: Sizes.size24,
+                      foregroundImage: NetworkImage(
+                          "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.yourUid}?alt=media&"),
+                      child: const Text(
+                        "??",
+                      ),
+                    ),
+                    Positioned(
+                      top: Sizes.size32,
+                      left: Sizes.size32,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: Sizes.size2,
+                          vertical: Sizes.size2,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(100),
+                          ),
+                          color: isDark ? null : Colors.grey.shade50,
+                        ),
+                        child: const Icon(
+                          Icons.circle,
+                          color: Colors.green,
+                          size: Sizes.size14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                title: const Text(
+                  "??",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: const Text("Active now"),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    FaIcon(
+                      FontAwesomeIcons.flag,
+                      size: Sizes.size20,
+                    ),
+                    Gaps.h32,
+                    FaIcon(
+                      FontAwesomeIcons.ellipsis,
+                    )
+                  ],
+                ),
+              );
+            }
+          },
         ),
       ),
       body: GestureDetector(
@@ -126,9 +201,13 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
             ),
             child: Stack(
               children: [
-                ref.watch(chatProvider).when(
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (error, stackTrace) => Center(child: Text(error.toString())),
+                ref.watch(chatProvider(widget.chatRoomId)).when(
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      error: (error, stackTrace) => Center(
+                        child: Text(error.toString()),
+                      ),
                       data: (data) {
                         return ListView.separated(
                           // reverse: true,
@@ -194,57 +273,72 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(Sizes.size32),
-                                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
-                                  width: Sizes.size80,
-                                  height: Sizes.size28,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text("\u{2764}"),
-                                      Text("\u{2764}"),
-                                      Text("\u{2764}"),
-                                    ],
-                                  ),
-                                ),
-                                Gaps.h7,
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(Sizes.size28),
-                                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
-                                  width: Sizes.size80,
-                                  height: Sizes.size28,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text("\u{1F602}"),
-                                      Text("\u{1F602}"),
-                                      Text("\u{1F602}"),
-                                    ],
+                                GestureDetector(
+                                  onTap: () {
+                                    _textEditingController.text = "\u{2764}\u{2764}\u{2764}";
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(Sizes.size32),
+                                      color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
+                                    width: Sizes.size80,
+                                    height: Sizes.size28,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: const [
+                                        Text("\u{2764}"),
+                                        Text("\u{2764}"),
+                                        Text("\u{2764}"),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Gaps.h7,
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(Sizes.size28),
-                                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                                GestureDetector(
+                                  onTap: () {
+                                    _textEditingController.text = "\u{1F602}\u{1F602}\u{1F602}";
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(Sizes.size28),
+                                      color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
+                                    width: Sizes.size80,
+                                    height: Sizes.size28,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: const [
+                                        Text("\u{1F602}"),
+                                        Text("\u{1F602}"),
+                                        Text("\u{1F602}"),
+                                      ],
+                                    ),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
-                                  width: Sizes.size80,
-                                  height: Sizes.size28,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text("\u{1F44D}"),
-                                      Text("\u{1F44D}"),
-                                      Text("\u{1F44D}"),
-                                    ],
+                                ),
+                                Gaps.h7,
+                                GestureDetector(
+                                  onTap: () {
+                                    _textEditingController.text = "\u{1F44D}\u{1F44D}\u{1F44D}";
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(Sizes.size28),
+                                      color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
+                                    width: Sizes.size80,
+                                    height: Sizes.size28,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: const [
+                                        Text("\u{1F44D}"),
+                                        Text("\u{1F44D}"),
+                                        Text("\u{1F44D}"),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Gaps.h7,
