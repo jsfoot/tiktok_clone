@@ -633,6 +633,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                             future: likeList,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
+                                if (snapshot.data!.isEmpty) {
+                                  return const Center(
+                                    child: Text("No liked Video"),
+                                  );
+                                }
                                 return GridView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,

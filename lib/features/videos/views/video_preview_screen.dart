@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/view_models/upload_video_view_model.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../../constants/gaps.dart';
+import '../../authentication/views/widgets/form_button.dart';
 
 class VideoPreviewScreen extends ConsumerStatefulWidget {
   final XFile video;
@@ -28,14 +30,27 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
 
   bool _savedVideo = false;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Map<String, String> formData = {};
+
+  void _onUpdateTap() {
+    if (_formKey.currentState != null) {
+      if (_formKey.currentState!.validate()) {
+        _formKey.currentState!.save();
+      }
+    }
+    _onUploadPressed();
+  }
+
   Future<void> _initVideo() async {
     _videoPlayerController = VideoPlayerController.file(
       File(widget.video.path),
     );
 
     await _videoPlayerController.initialize();
-    await _videoPlayerController.setLooping(true);
-    await _videoPlayerController.play();
+    // await _videoPlayerController.setLooping(true);
+    // await _videoPlayerController.play();
 
     setState(() {});
   }
@@ -51,8 +66,10 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
 
   void _onUploadPressed() async {
     ref.read(uploadVideoProvider.notifier).uploadVideo(
-          File(widget.video.path),
-          context,
+          video: File(widget.video.path),
+          context: context,
+          title: formData['title']!,
+          description: formData['description']!,
         );
   }
 
@@ -80,7 +97,7 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
               icon: FaIcon(_savedVideo ? FontAwesomeIcons.check : FontAwesomeIcons.download),
             ),
           IconButton(
-            onPressed: ref.watch(uploadVideoProvider).isLoading ? () {} : _onUploadPressed,
+            onPressed: ref.watch(uploadVideoProvider).isLoading ? () {} : _onUpdateTap,
             icon: ref.watch(uploadVideoProvider).isLoading
                 ? const CircularProgressIndicator()
                 : const FaIcon(FontAwesomeIcons.cloudArrowUp),
@@ -96,13 +113,74 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
                   : const Text("Not initialized video player")),
           Positioned(
             bottom: 30,
-            left: MediaQuery.of(context).size.width / 3,
-            right: MediaQuery.of(context).size.width / 3,
+            left: 10,
+            right: 10,
             child: Container(
-              color: Colors.white,
-              width: Sizes.size20,
-              child: const Text(
-                "sdfsdasdfasdasdasdfasdf",
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Center(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: const Text(
+                          "Title",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.text,
+                        decoration: const InputDecoration(
+                          hintText: 'Input video title',
+                        ),
+                        onSaved: (newValue) {
+                          if (newValue != null) {
+                            formData['title'] = newValue;
+                          } else {
+                            formData['title'] = "title";
+                          }
+                        },
+                      ),
+                      Gaps.v20,
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: const Text(
+                          "Description",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.text,
+                        decoration: const InputDecoration(
+                          hintText: 'Input video description',
+                        ),
+                        onSaved: (newValue) {
+                          if (newValue != null) {
+                            formData['description'] = newValue;
+                          } else {
+                            formData['description'] = "description";
+                          }
+                        },
+                      ),
+                      Gaps.v12,
+                      GestureDetector(
+                        onTap: ref.watch(uploadVideoProvider).isLoading ? () {} : _onUpdateTap,
+                        child: FormButton(
+                          formText: "Upload",
+                          disabled: ref.watch(uploadVideoProvider).isLoading,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
