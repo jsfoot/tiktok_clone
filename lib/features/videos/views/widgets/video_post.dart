@@ -105,7 +105,8 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
   }
 
   void _initVideoPlayer() async {
-    _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video_2.mp4");
+    _videoPlayerController = VideoPlayerController.network(widget.videoData.fileUrl);
+    // _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video_2.mp4");
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
 

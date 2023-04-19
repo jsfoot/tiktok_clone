@@ -29,6 +29,11 @@ class VideosRepository {
     }
   }
 
+  Future<QuerySnapshot<Map<String, dynamic>>> getVideosList() async {
+    final query = _db.collection("videos").orderBy("createdAt", descending: true);
+    return query.get();
+  }
+
   Future<Map<String, dynamic>> getVideoInfo(String videoId) async {
     final query = await _db.collection("videos").doc(videoId).get();
     final videoInfo = query.data()!;

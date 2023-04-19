@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/discover/view_models/divcover_view_model.dart';
 import 'package:tiktok_clone/utils.dart';
+
+import '../../videos/models/video_model.dart';
 
 final tabs = [
   "Top",
@@ -15,14 +19,14 @@ final tabs = [
   "Brands",
 ];
 
-class DiscoverScreen extends StatefulWidget {
+class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({Key? key}) : super(key: key);
 
   @override
-  State<DiscoverScreen> createState() => _DiscoverScreenState();
+  ConsumerState<DiscoverScreen> createState() => _DiscoverScreenState();
 }
 
-class _DiscoverScreenState extends State<DiscoverScreen> {
+class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   final TextEditingController _textEditingController = TextEditingController();
 
   void _onSearchChanged(String value) {
@@ -46,6 +50,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    Future<List<VideoModel>> videoList = ref.read(discoverProvider.notifier).getVideosList();
 
     return DefaultTabController(
       length: tabs.length,
@@ -149,94 +154,111 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            GridView.builder(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              itemCount: 20,
-              padding: const EdgeInsets.all(Sizes.size6),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: width > Breakpoints.lg ? 5 : 2,
-                crossAxisSpacing: Sizes.size10,
-                mainAxisSpacing: Sizes.size10,
-                childAspectRatio: 9 / 21,
-              ),
-              itemBuilder: (context, index) => LayoutBuilder(
-                builder: (context, constraints) => Column(
-                  children: [
-                    Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          Sizes.size4,
-                        ),
-                      ),
-                      child: AspectRatio(
-                        aspectRatio: 9 / 16,
-                        child: FadeInImage.assetNetwork(
-                          fit: BoxFit.cover,
-                          placeholder: "assets/images/placeholder.jpg",
-                          image:
-                              "https://steamuserimages-a.akamaihd.net/ugc/1644340994747007967/853B20CD7694F5CF40E83AAC670572A3FE1E3D35/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
-                        ),
-                      ),
+        body: FutureBuilder(
+          future: videoList,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return TabBarView(
+                children: [
+                  GridView.builder(
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                    itemCount: snapshot.data!.length,
+                    padding: const EdgeInsets.all(Sizes.size6),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: width > Breakpoints.lg ? 5 : 2,
+                      crossAxisSpacing: Sizes.size10,
+                      mainAxisSpacing: Sizes.size10,
+                      childAspectRatio: 9 / 21,
                     ),
-                    Gaps.v10,
-                    const Text(
-                      "This is a very long caption for my tiktok that i upload just now currently. ",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: Sizes.size18,
-                        fontWeight: FontWeight.bold,
-                        height: 1.1,
-                      ),
-                    ),
-                    Gaps.v5,
-                    DefaultTextStyle(
-                      style: TextStyle(
-                        color: isDarkMode(context) ? Colors.grey.shade300 : Colors.grey.shade600,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      child: Row(
+                    itemBuilder: (context, index) => LayoutBuilder(
+                      builder: (context, constraints) => Column(
                         children: [
-                          const CircleAvatar(
-                            radius: 12,
-                            backgroundImage: NetworkImage("https://avatars.githubusercontent.com/u/76519264?v=4"),
-                          ),
-                          Gaps.h4,
-                          const Expanded(
-                            child: Text(
-                              "very_very_strawberry_long_id_jin",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                          Container(
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                Sizes.size4,
+                              ),
+                            ),
+                            child: AspectRatio(
+                              aspectRatio: 9 / 16,
+                              child: FadeInImage.assetNetwork(
+                                fit: BoxFit.cover,
+                                placeholder: "assets/images/placeholder.jpg",
+                                image: snapshot.data![index].thumbnailUrl,
+                                // "https://steamuserimages-a.akamaihd.net/ugc/1644340994747007967/853B20CD7694F5CF40E83AAC670572A3FE1E3D35/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
+                              ),
                             ),
                           ),
-                          Gaps.h4,
-                          FaIcon(
-                            FontAwesomeIcons.heart,
-                            size: Sizes.size16,
-                            color: Colors.grey.shade600,
+                          Gaps.v10,
+                          Text(
+                            snapshot.data![index].title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: Sizes.size18,
+                              fontWeight: FontWeight.bold,
+                              height: 1.1,
+                            ),
                           ),
-                          Gaps.h2,
-                          const Text("2.5M"),
+                          Gaps.v5,
+                          DefaultTextStyle(
+                            style: TextStyle(
+                              color:
+                                  isDarkMode(context) ? Colors.grey.shade300 : Colors.grey.shade600,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 12,
+                                  backgroundImage: NetworkImage(
+                                      "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${snapshot.data![index].creatorUid}?alt=media&"
+                                      // "https://avatars.githubusercontent.com/u/76519264?v=4",
+                                      ),
+                                ),
+                                Gaps.h4,
+                                Expanded(
+                                  child: Text(
+                                    snapshot.data![index].creator,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Gaps.h4,
+                                FaIcon(
+                                  FontAwesomeIcons.heart,
+                                  size: Sizes.size16,
+                                  color: Colors.grey.shade600,
+                                ),
+                                Gaps.h2,
+                                Text(
+                                  snapshot.data![index].likes.toString(),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            for (var tab in tabs.skip(1))
-              Center(
-                child: Text(
-                  tab,
-                  style: const TextStyle(
-                    fontSize: Sizes.size28,
+                    ),
                   ),
-                ),
-              ),
-          ],
+                  for (var tab in tabs.skip(1))
+                    Center(
+                      child: Text(
+                        tab,
+                        style: const TextStyle(
+                          fontSize: Sizes.size28,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ),
       ),
     );

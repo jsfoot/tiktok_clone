@@ -44,6 +44,16 @@ class UserRepository {
     });
     return userList;
   }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getUserVideosList(String userId) async {
+    final query = _db.collection("users").doc(userId).collection("videos");
+    return query.get();
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getUserLikeList(String userId) async {
+    final query = _db.collection("users").doc(userId).collection("likes");
+    return query.get();
+  }
 }
 
 final userRepo = Provider((ref) => UserRepository());

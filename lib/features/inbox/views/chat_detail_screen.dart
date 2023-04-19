@@ -141,7 +141,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                       foregroundImage: NetworkImage(
                           "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.yourUid}?alt=media&"),
                       child: const Text(
-                        "??",
+                        " ",
                       ),
                     ),
                     Positioned(
@@ -168,7 +168,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                   ],
                 ),
                 title: const Text(
-                  "??",
+                  " ",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                   ),

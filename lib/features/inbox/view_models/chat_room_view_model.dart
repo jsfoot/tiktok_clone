@@ -10,8 +10,8 @@ import '../models/chat_room_model.dart';
 class ChatRoomViewModel extends AsyncNotifier<void> {
   late final ChatRoomRepo _chatRoomRepo;
   late final UserRepository _userRepository;
-  late List<String> chatRoomIdList = [];
-  late List<String> userList = [];
+  List<String> chatRoomIdList = [];
+  List<String> userList = [];
 
   @override
   FutureOr<void> build() {

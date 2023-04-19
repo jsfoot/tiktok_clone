@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/settings/settings_screen.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 import 'package:tiktok_clone/features/users/views/update_profile_screen.dart';
@@ -44,8 +45,17 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+
     final bio = ref.read(usersProvider).value?.bio;
     final link = ref.read(usersProvider).value?.link;
+
+    final userId = ref.read(authRepo).user!.uid;
+
+    Future<List<Map<String, dynamic>>> videoList =
+        ref.read(usersProvider.notifier).getUserVideosList(userId);
+
+    Future<List<Map<String, dynamic>>> likeList =
+        ref.read(usersProvider.notifier).getUserLikeList(userId);
 
     return ref.watch(usersProvider).when(
           error: (error, stackTrace) => Center(
@@ -532,84 +542,179 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       },
                       body: TabBarView(
                         children: [
-                          GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                            itemCount: 20,
-                            padding: EdgeInsets.zero,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: width > Breakpoints.lg ? 5 : 3,
-                              crossAxisSpacing: Sizes.size2,
-                              mainAxisSpacing: Sizes.size2,
-                              childAspectRatio: 9 / 14,
-                            ),
-                            itemBuilder: (context, index) => Stack(
-                              children: [
-                                Column(
-                                  children: [
-                                    AspectRatio(
-                                      aspectRatio: 9 / 14,
-                                      child: FadeInImage.assetNetwork(
-                                        fit: BoxFit.cover,
-                                        placeholder: "assets/images/placeholder.jpg",
-                                        image:
-                                            "https://steamuserimages-a.akamaihd.net/ugc/1644340994747007967/853B20CD7694F5CF40E83AAC670572A3FE1E3D35/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Positioned(
-                                  top: 4,
-                                  left: 4,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: Sizes.size2,
-                                      vertical: Sizes.size1,
-                                    ),
-                                    color: Theme.of(context).primaryColor,
-                                    child: const Text(
-                                      "Pinned",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: Sizes.size12,
-                                      ),
-                                    ),
+                          FutureBuilder(
+                            future: videoList,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                                  itemCount: snapshot.data!.length,
+                                  padding: EdgeInsets.zero,
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: width > Breakpoints.lg ? 5 : 3,
+                                    crossAxisSpacing: Sizes.size2,
+                                    mainAxisSpacing: Sizes.size2,
+                                    childAspectRatio: 9 / 14,
                                   ),
-                                ),
-                                const Positioned(
-                                  right: 4,
-                                  top: 4,
-                                  child: Icon(
-                                    Icons.photo_rounded,
-                                    color: Colors.white,
-                                    size: Sizes.size20,
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 4,
-                                  left: 4,
-                                  child: Row(
-                                    children: const [
-                                      Icon(
-                                        Icons.play_arrow_outlined,
-                                        color: Colors.white,
+                                  itemBuilder: (context, index) => Stack(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          AspectRatio(
+                                            aspectRatio: 9 / 14,
+                                            child: FadeInImage.assetNetwork(
+                                              fit: BoxFit.cover,
+                                              placeholder: "assets/images/placeholder.jpg",
+                                              image: snapshot.data![index]['thumbnailUrl'],
+                                              // "https://steamuserimages-a.akamaihd.net/ugc/1644340994747007967/853B20CD7694F5CF40E83AAC670572A3FE1E3D35/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        "3.1M",
-                                        style: TextStyle(
+                                      Positioned(
+                                        top: 4,
+                                        left: 4,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: Sizes.size2,
+                                            vertical: Sizes.size1,
+                                          ),
+                                          color: Theme.of(context).primaryColor,
+                                          child: const Text(
+                                            "Pinned",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: Sizes.size12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const Positioned(
+                                        right: 4,
+                                        top: 4,
+                                        child: Icon(
+                                          Icons.photo_rounded,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold,
+                                          size: Sizes.size20,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 4,
+                                        left: 4,
+                                        child: Row(
+                                          children: const [
+                                            Icon(
+                                              Icons.play_arrow_outlined,
+                                              color: Colors.white,
+                                            ),
+                                            Text(
+                                              "3.1M",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
-                            ),
+                                );
+                              } else {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
                           ),
-                          const Center(
-                            child: Text("Page two"),
+                          FutureBuilder(
+                            future: likeList,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                                  itemCount: snapshot.data!.length,
+                                  padding: EdgeInsets.zero,
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: width > Breakpoints.lg ? 5 : 3,
+                                    crossAxisSpacing: Sizes.size2,
+                                    mainAxisSpacing: Sizes.size2,
+                                    childAspectRatio: 9 / 14,
+                                  ),
+                                  itemBuilder: (context, index) => Stack(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          AspectRatio(
+                                            aspectRatio: 9 / 14,
+                                            child: FadeInImage.assetNetwork(
+                                              fit: BoxFit.cover,
+                                              placeholder: "assets/images/placeholder.jpg",
+                                              image: snapshot.data![index]['thumbnailUrl'],
+                                              // "https://steamuserimages-a.akamaihd.net/ugc/1644340994747007967/853B20CD7694F5CF40E83AAC670572A3FE1E3D35/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Positioned(
+                                        top: 4,
+                                        left: 4,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: Sizes.size2,
+                                            vertical: Sizes.size1,
+                                          ),
+                                          color: Theme.of(context).primaryColor,
+                                          child: const Text(
+                                            "Pinned",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: Sizes.size12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const Positioned(
+                                        right: 4,
+                                        top: 4,
+                                        child: Icon(
+                                          Icons.photo_rounded,
+                                          color: Colors.white,
+                                          size: Sizes.size20,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 4,
+                                        left: 4,
+                                        child: Row(
+                                          children: const [
+                                            Icon(
+                                              Icons.play_arrow_outlined,
+                                              color: Colors.white,
+                                            ),
+                                            Text(
+                                              "3.1M",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
                           ),
                         ],
                       ),

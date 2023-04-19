@@ -55,6 +55,22 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
     state = AsyncValue.data(state.value!.copyWith(bio: bio, link: link));
     await _usersRepository.updateUser(state.value!.uid, {"bio": bio, "link": link});
   }
+
+  Future<List<Map<String, dynamic>>> getUserVideosList(String userId) async {
+    final videoList = await _usersRepository.getUserVideosList(userId);
+    final videos = videoList.docs.map(
+      (doc) => doc.data(),
+    );
+    return videos.toList();
+  }
+
+  Future<List<Map<String, dynamic>>> getUserLikeList(String userId) async {
+    final likeList = await _usersRepository.getUserLikeList(userId);
+    final likes = likeList.docs.map(
+      (doc) => doc.data(),
+    );
+    return likes.toList();
+  }
 }
 
 final usersProvider = AsyncNotifierProvider<UsersViewModel, UserProfileModel>(

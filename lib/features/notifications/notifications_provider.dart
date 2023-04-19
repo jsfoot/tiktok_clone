@@ -30,14 +30,14 @@ class NotificationsProvider extends FamilyAsyncNotifier<void, BuildContext> {
 
     // in foreground stauts
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      print("I just got a message and I'm in the foreground");
-      print(event.notification?.title);
+      // print("I just got a message and I'm in the foreground");
+      // print(event.notification?.title);
     });
 
     // in background status
     FirebaseMessaging.onMessageOpenedApp.listen((notification) {
       context.pushNamed(ChatsScreen.routeName);
-      print(notification.data['screen']);
+      // print(notification.data['screen']);
     });
 
     // in terminated status

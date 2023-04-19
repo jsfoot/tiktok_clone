@@ -4,12 +4,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/discover/discover_screen.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/nav_tab.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/post_video_button.dart';
 import 'package:tiktok_clone/features/users/views/user_profile_screen.dart';
 import 'package:tiktok_clone/utils.dart';
 
+import '../../../features/discover/views/discover_screen.dart';
 import '../../../features/inbox/views/inbox_screen.dart';
 import '../../../features/videos/views/video_recording_screen.dart';
 import '../../../features/videos/views/video_timeline_screen.dart';

@@ -109,6 +109,7 @@ class SettingsScreen extends ConsumerWidget {
                             onPressed: () {
                               ref.read(authRepo).signOut();
                               context.go("/");
+                              context.pop();
                             },
                             child: const Text("Yes"),
                           ),
