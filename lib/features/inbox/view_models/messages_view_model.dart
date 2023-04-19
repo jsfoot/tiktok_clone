@@ -16,7 +16,7 @@ class MessagesViewModel extends FamilyAsyncNotifier<void, String> {
     _repo = ref.read(messagesRepo);
   }
 
-  Future<void> sendMessage(String text) async {
+  Future<void> sendMessage(String text, String yourUid) async {
     final user = ref.read(authRepo).user;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
@@ -25,7 +25,12 @@ class MessagesViewModel extends FamilyAsyncNotifier<void, String> {
         userId: user!.uid,
         createdAt: DateTime.now().millisecondsSinceEpoch,
       );
-      _repo.sendMessage(message, _chatRoomId);
+      _repo.sendMessage(
+        message: message,
+        chatRoomId: _chatRoomId,
+        personA: user.uid,
+        personB: yourUid,
+      );
     });
   }
 }

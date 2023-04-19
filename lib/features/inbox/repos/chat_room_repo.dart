@@ -25,21 +25,15 @@ class ChatRoomRepo {
         .set(chatRoomModel.toJson());
   }
 
-  Future<List<Map<String, dynamic>>> getChatRoomList(String userId) async {
-    List<Map<String, dynamic>> roomIdList = [];
-    final queryPersonA =
-        await _db.collection("chat_rooms").where("personA", isEqualTo: userId).get();
-    for (var chatRoomModel in queryPersonA.docs) {
-      roomIdList.add(chatRoomModel.data());
-    }
+  Future<List<Map<String, dynamic>>> getChatRoomModelList(String userId) async {
+    List<Map<String, dynamic>> chatRoomModelList = [];
 
-    final queryPersonB =
-        await _db.collection("chat_rooms").where("personB", isEqualTo: userId).get();
-    for (var chatRoomModel in queryPersonB.docs) {
-      roomIdList.add(chatRoomModel.data());
-    }
+    final query = await _db.collection("users").doc(userId).collection("chat_rooms").get();
 
-    return roomIdList;
+    for (var chatRoomModel in query.docs) {
+      chatRoomModelList.add(chatRoomModel.data());
+    }
+    return chatRoomModelList;
   }
 
   Future<Map<String, dynamic>?> getChatRoomInfo(String chatRoomId) async {

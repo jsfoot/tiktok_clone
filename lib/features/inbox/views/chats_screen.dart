@@ -122,7 +122,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
   Widget build(BuildContext context) {
     final userId = ref.read(authRepo).user!.uid;
     Future<List<Map<String, dynamic>>> chatRoomList =
-        ref.read(chatRoomProvider.notifier).getChatRoomList(userId);
+        ref.read(chatRoomProvider.notifier).getChatRoomModelList(userId);
 
     return Scaffold(
       appBar: AppBar(

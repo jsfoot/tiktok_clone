@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
+import 'package:tiktok_clone/features/inbox/view_models/messages_view_model.dart';
 
 import '../../../constants/breakpoints.dart';
 import '../../../constants/sizes.dart';
@@ -62,29 +63,46 @@ class _ChatUserListScreenState extends ConsumerState<ChatUserListScreen> {
   }
 
   void _onTileTap(int index, snapshot) async {
-    final chatRoomId =
-        await ref.read(chatRoomProvider.notifier).getChatRoomId(snapshot.data![index]['uid']);
     final myUid = ref.read(authRepo).user!.uid;
-    if (snapshot.data![index]['uid'] == myUid) return;
-    if (chatRoomId != null) {
+    final yourUid = snapshot.data![index]['uid'];
+    if (myUid == yourUid) return;
+
+    await ref.read(chatRoomProvider.notifier).getChatRoomUsers(yourUid);
+    final chatRoomUserList = ref.read(chatRoomProvider.notifier).userList.toSet();
+
+    if (!chatRoomUserList.contains(myUid)) {
+      await ref
+          .read(chatRoomProvider.notifier)
+          .createChatRoom(yourUserProfile: snapshot.data![index]);
+
+      await ref.read(chatRoomProvider.notifier).getChatRoomIdList(myUid);
+      final chatRoomIdList = ref.read(chatRoomProvider.notifier).chatRoomIdList.toSet();
+      final chatRoomId = chatRoomIdList.where((element) => element.contains(yourUid)).first;
+      await ref
+          .read(messagesProvider(chatRoomId).notifier)
+          .sendMessage("Send First Message", yourUid);
+
       context.pushNamed(
         ChatDetailScreen.routeName,
         extra: {
           'chatRoomId': chatRoomId,
-          'yourUid': snapshot.data![index]['uid'],
+          'yourUid': yourUid,
         },
       );
+      return;
     } else {
-      await ref.read(chatRoomProvider.notifier).createChatRoom(snapshot.data![index]);
-      final chatRoomId =
-          await ref.read(chatRoomProvider.notifier).getChatRoomId(snapshot.data![index]['uid']);
+      await ref.read(chatRoomProvider.notifier).getChatRoomIdList(myUid);
+      final chatRoomIdList = ref.read(chatRoomProvider.notifier).chatRoomIdList.toSet();
+      final chatRoomId = chatRoomIdList.where((element) => element.contains(yourUid)).first;
+
       context.pushNamed(
         ChatDetailScreen.routeName,
         extra: {
           'chatRoomId': chatRoomId,
-          'yourUid': snapshot.data![index]['uid'],
+          'yourUid': yourUid,
         },
       );
+      return;
     }
   }
 

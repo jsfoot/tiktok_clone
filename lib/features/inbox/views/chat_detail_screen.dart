@@ -51,7 +51,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     if (text == "") {
       return;
     }
-    ref.read(messagesProvider(widget.chatRoomId).notifier).sendMessage(text);
+    ref.read(messagesProvider(widget.chatRoomId).notifier).sendMessage(text, widget.yourUid);
     _textEditingController.text = "";
   }
 

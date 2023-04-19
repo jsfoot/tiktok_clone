@@ -10,6 +10,8 @@ import '../models/chat_room_model.dart';
 class ChatRoomViewModel extends AsyncNotifier<void> {
   late final ChatRoomRepo _chatRoomRepo;
   late final UserRepository _userRepository;
+  late List<String> chatRoomIdList = [];
+  late List<String> userList = [];
 
   @override
   FutureOr<void> build() {
@@ -17,7 +19,7 @@ class ChatRoomViewModel extends AsyncNotifier<void> {
     _userRepository = ref.read(userRepo);
   }
 
-  Future<void> createChatRoom(Map<String, dynamic> yourUserProfile) async {
+  Future<void> createChatRoom({required Map<String, dynamic> yourUserProfile}) async {
     final myUid = ref.read(authRepo).user!.uid;
     final myUserProfile = await _userRepository.findProfile(myUid);
 
@@ -41,21 +43,30 @@ class ChatRoomViewModel extends AsyncNotifier<void> {
     return userList;
   }
 
-  Future<List<Map<String, dynamic>>> getChatRoomList(String userId) async {
-    return await _chatRoomRepo.getChatRoomList(userId);
+  Future<List<Map<String, dynamic>>> getChatRoomModelList(String userId) async {
+    return await _chatRoomRepo.getChatRoomModelList(userId);
   }
 
-  Future<String?> getChatRoomId(String userId) async {
-    final myUid = ref.read(authRepo).user!.uid;
-    if (userId != myUid) {
-      final list = await getChatRoomList(userId);
-      if (list.isEmpty) {
-        return null;
-      } else {
-        return list.first['chatRoomId'];
+  Future<void> getChatRoomIdList(String userId) async {
+    final list = await getChatRoomModelList(userId);
+    if (list.isEmpty) return;
+
+    for (var element in list) {
+      chatRoomIdList.add(element['chatRoomId']);
+    }
+  }
+
+  Future<void> getChatRoomUsers(String userId) async {
+    final list = await getChatRoomModelList(userId);
+
+    if (list.isEmpty) {
+      return;
+    } else {
+      for (var element in list) {
+        userList.add(element['personA']);
+        userList.add(element['personB']);
       }
     }
-    return null;
   }
 
   Future<Map<String, dynamic>?> getChatRoomInfo(String chatRoomId) async {
