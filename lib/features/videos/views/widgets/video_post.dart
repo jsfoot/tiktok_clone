@@ -105,8 +105,8 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
   }
 
   void _initVideoPlayer() async {
-    _videoPlayerController = VideoPlayerController.network(widget.videoData.fileUrl);
-    // _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video_2.mp4");
+    // _videoPlayerController = VideoPlayerController.network(widget.videoData.fileUrl);
+    _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video_2.mp4");
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
 
@@ -177,7 +177,7 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
           constraints: const BoxConstraints(
             maxWidth: Breakpoints.lg,
           ),
-          child: const VideoComments(),
+          child: VideoComments(videoId: widget.videoData.videoId),
         ),
       ),
       backgroundColor: Colors.transparent,
@@ -295,30 +295,31 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                   ),
                 ),
                 Gaps.v10,
+                Text(
+                  widget.videoData.title,
+                  style: const TextStyle(
+                    fontSize: Sizes.size18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Gaps.v10,
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
-                      child: Text(
-                        widget.videoData.description,
-                        style: const TextStyle(
-                          fontSize: Sizes.size16,
-                          color: Colors.white,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: _maxLines,
-                      ),
-                    ),
-                    Gaps.h10,
                     GestureDetector(
                       onTap: _onSeeMoreTap,
-                      child: Text(
-                        _seeMoreText,
-                        style: const TextStyle(
-                          fontSize: Sizes.size16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width / 2,
+                        child: Text(
+                          widget.videoData.description,
+                          style: const TextStyle(
+                            fontSize: Sizes.size16,
+                            color: Colors.white70,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: _maxLines,
                         ),
                       ),
                     ),

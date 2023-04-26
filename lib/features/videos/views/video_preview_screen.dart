@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:tiktok_clone/features/videos/view_models/upload_video_view_model.dart';
+import 'package:tiktok_clone/utils.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../constants/gaps.dart';
@@ -117,8 +118,8 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
             right: 10,
             child: Container(
               padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: isDarkMode(context) ? Colors.black54 : Colors.white54,
               ),
               child: Center(
                 child: Form(

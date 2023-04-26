@@ -546,6 +546,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                             future: videoList,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
+                                if (snapshot.data!.isEmpty) {
+                                  return const Center(
+                                    child: Text("No Video"),
+                                  );
+                                }
                                 return GridView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,

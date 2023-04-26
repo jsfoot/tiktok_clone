@@ -16,14 +16,14 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
   final Duration _scrollDuration = const Duration(milliseconds: 250);
   final Curve _scrollCurve = Curves.linear;
 
-  void _onPageChanged(int page) {
+  void _onPageChanged(int page) async {
     _pageController.animateToPage(
       page,
       duration: _scrollDuration,
       curve: _scrollCurve,
     );
     if (page == _itemCount - 1) {
-      ref.watch(timelineProvider.notifier).fetchNextPage();
+      await ref.watch(timelineProvider.notifier).fetchNextPage();
     }
   }
 
