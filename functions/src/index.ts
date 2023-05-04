@@ -57,6 +57,7 @@ export const onLikedCreated = functions.firestore
       likes: admin.firestore.FieldValue.increment(1)
     });
 
+    // Push notification
     const video = (await db.collection("videos").doc(videoId).get()).data();
     if (video) {
       const creatorUid = video.creatorUid;
@@ -84,4 +85,37 @@ export const onLikedRemoved = functions.firestore
     await db.collection("videos").doc(videoId).update({
       likes: admin.firestore.FieldValue.increment(-1)
     });
+  });
+
+
+export const onMessageCreated = functions.firestore
+  .document("chat_rooms/{chat_roomsId}/texts/{textsId}")
+  .onCreate(async (snapshot, context) => {
+    const db = admin.firestore();
+
+    const chatRoomId = db.collection("chat_rooms").id;
+    const [personA, _] = chatRoomId.split("000");
+    const message = snapshot.data();
+    const messageUserId = message!['userId'];
+
+    // Push notification
+
+    if (messageUserId !== personA) {
+      const user = (await db.collection("users").doc(personA).get()).data();
+      if (user) {
+        const token = user.token;
+        await admin.messaging().sendToDevice(token, {
+          data: {
+            screen: "123",
+          },
+          notification: {
+            title: "New message!",
+            body: message!['text'],
+          },
+        });
+      }
+    }
+
+
+
   });

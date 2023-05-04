@@ -50,8 +50,8 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
     );
 
     await _videoPlayerController.initialize();
-    // await _videoPlayerController.setLooping(true);
-    // await _videoPlayerController.play();
+    await _videoPlayerController.setLooping(true);
+    await _videoPlayerController.play();
 
     setState(() {});
   }
@@ -175,7 +175,9 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen> {
                       GestureDetector(
                         onTap: ref.watch(uploadVideoProvider).isLoading ? () {} : _onUpdateTap,
                         child: FormButton(
-                          formText: "Upload",
+                          formText: ref.watch(uploadVideoProvider).isLoading
+                              ? "Now uploading.."
+                              : "Upload",
                           disabled: ref.watch(uploadVideoProvider).isLoading,
                         ),
                       ),

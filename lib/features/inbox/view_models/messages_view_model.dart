@@ -33,6 +33,10 @@ class MessagesViewModel extends FamilyAsyncNotifier<void, String> {
       );
     });
   }
+
+  Future<void> deleteMessage(String createdAt, bool isLast) async {
+    await _repo.deleteMessage(_chatRoomId, createdAt, isLast);
+  }
 }
 
 final messagesProvider = AsyncNotifierProvider.family<MessagesViewModel, void, String>(

@@ -1,7 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -30,6 +32,7 @@ class ChatDetailScreen extends ConsumerStatefulWidget {
 
 class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   final TextEditingController _textEditingController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   bool _isWriting = false;
 
@@ -46,13 +49,29 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     });
   }
 
-  void _onSendPressed() {
+  void _onSendPressed() async {
     final text = _textEditingController.text;
     if (text == "") {
       return;
     }
     ref.read(messagesProvider(widget.chatRoomId).notifier).sendMessage(text, widget.yourUid);
     _textEditingController.text = "";
+    await _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent + 90,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _deleteMessage(String createdAt, bool isLast) async {
+    await ref.read(messagesProvider(widget.chatRoomId).notifier).deleteMessage(createdAt, isLast);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _textEditingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -210,6 +229,8 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                       ),
                       data: (data) {
                         return ListView.separated(
+                          scrollDirection: Axis.vertical,
+                          controller: _scrollController,
                           // reverse: true,
                           padding: EdgeInsets.only(
                             bottom:
@@ -223,34 +244,156 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                           itemBuilder: (context, index) {
                             final message = data[index];
                             final isMine = message.userId == ref.watch(authRepo).user!.uid;
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment:
-                                  isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(Sizes.size14),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: const Radius.circular(Sizes.size20),
-                                      topRight: const Radius.circular(Sizes.size20),
-                                      bottomLeft:
-                                          Radius.circular(isMine ? Sizes.size20 : Sizes.size5),
-                                      bottomRight:
-                                          Radius.circular(isMine ? Sizes.size5 : Sizes.size20),
-                                    ),
-                                    color: isMine ? Colors.blue : Theme.of(context).primaryColor,
+
+                            if (isMine) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+                                    children: [
+                                      GestureDetector(
+                                        onLongPress: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: const Text("Delete message"),
+                                              content:
+                                                  const Text("are you sure delete this message?"),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    final isLast = data[index] == data.last;
+                                                    _deleteMessage(
+                                                        data[index].createdAt.toString(), isLast);
+                                                    context.pop();
+                                                  },
+                                                  child: const Text("Yes"),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    context.pop();
+                                                  },
+                                                  child: const Text("No"),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(Sizes.size14),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: const Radius.circular(Sizes.size20),
+                                              topRight: const Radius.circular(Sizes.size20),
+                                              bottomLeft: Radius.circular(
+                                                  isMine ? Sizes.size20 : Sizes.size5),
+                                              bottomRight: Radius.circular(
+                                                  isMine ? Sizes.size5 : Sizes.size20),
+                                            ),
+                                            color: isMine
+                                                ? Colors.blue
+                                                : Theme.of(context).primaryColor,
+                                          ),
+                                          child: Text(
+                                            message.text,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: Sizes.size16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  child: Text(
-                                    message.text,
+                                  Text(
+                                    DateTime.fromMillisecondsSinceEpoch(data[index].createdAt)
+                                        .toString()
+                                        .substring(11, 16),
                                     style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: Sizes.size16,
+                                      fontSize: Sizes.size10,
+                                      color: Colors.black54,
                                     ),
                                   ),
-                                ),
-                              ],
-                            );
+                                ],
+                              );
+                            } else {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+                                    children: [
+                                      GestureDetector(
+                                        onLongPress: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: const Text("Delete message"),
+                                              content:
+                                                  const Text("are you sure delete this message?"),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    final isLast = data[index] == data.last;
+                                                    _deleteMessage(
+                                                        data[index].createdAt.toString(), isLast);
+                                                    context.pop();
+                                                  },
+                                                  child: const Text("Yes"),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    context.pop();
+                                                  },
+                                                  child: const Text("No"),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(Sizes.size14),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: const Radius.circular(Sizes.size20),
+                                              topRight: const Radius.circular(Sizes.size20),
+                                              bottomLeft: Radius.circular(
+                                                  isMine ? Sizes.size20 : Sizes.size5),
+                                              bottomRight: Radius.circular(
+                                                  isMine ? Sizes.size5 : Sizes.size20),
+                                            ),
+                                            color: isMine
+                                                ? Colors.blue
+                                                : Theme.of(context).primaryColor,
+                                          ),
+                                          child: Text(
+                                            message.text,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: Sizes.size16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    DateTime.fromMillisecondsSinceEpoch(data[index].createdAt)
+                                        .toString()
+                                        .substring(11, 16),
+                                    style: const TextStyle(
+                                      fontSize: Sizes.size10,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
                           },
                         );
                       },

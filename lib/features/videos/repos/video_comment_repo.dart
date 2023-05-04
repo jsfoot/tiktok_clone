@@ -7,10 +7,22 @@ class VideoCommentRepository {
 
   Future<void> createVideoComment(VideoCommentModel comment, String videoId) async {
     await _db.collection("videos").doc(videoId).collection("comments").add(comment.toJson());
+
+    final query = await _db.collection("videos").doc(videoId).get();
+    final data = query.data();
+    final commentsCount = data!['comments'];
+    await _db.collection("videos").doc(videoId).update({
+      "comments": commentsCount + 1,
+    });
   }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getVideoComment(String videoId) async {
-    final query = await _db.collection("videos").doc(videoId).collection("comments").get();
+    final query = await _db
+        .collection("videos")
+        .doc(videoId)
+        .collection("comments")
+        .orderBy("createdAt")
+        .get();
     return query.docs;
   }
 }
