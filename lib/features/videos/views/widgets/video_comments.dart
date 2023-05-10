@@ -6,11 +6,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 import 'package:tiktok_clone/features/videos/view_models/video_comment_view_model.dart';
 import 'package:tiktok_clone/utils.dart';
 
 import '../../../../generated/l10n.dart';
+import '../../../users/views/user_profile_screen.dart';
 
 class VideoComments extends ConsumerStatefulWidget {
   final String videoId;
@@ -48,6 +50,7 @@ class _VideoCommentsState extends ConsumerState<VideoComments> {
 
   @override
   Widget build(BuildContext context) {
+    final myUid = ref.read(authRepo).user!.uid;
     final size = MediaQuery.of(context).size;
     final isDark = isDarkMode(context);
     final userName = ref.read(usersProvider).value?.name as String;
@@ -102,14 +105,26 @@ class _VideoCommentsState extends ConsumerState<VideoComments> {
                         itemBuilder: (context, index) => Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CircleAvatar(
-                              radius: 18,
-                              backgroundColor: isDark ? Colors.grey.shade500 : null,
-                              foregroundImage: NetworkImage(
-                                "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${snapshot.data![index]['userId']}?alt=media&",
-                              ),
-                              child: Text(
-                                snapshot.data![index]['userName'],
+                            GestureDetector(
+                              onTap: () {
+                                final commentorUid = snapshot.data![index]['userId'];
+                                if (commentorUid != myUid) {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    fullscreenDialog: true,
+                                    builder: (context) =>
+                                        UserProfileScreen(userId: commentorUid, tab: "otherUser"),
+                                  ));
+                                }
+                              },
+                              child: CircleAvatar(
+                                radius: 18,
+                                backgroundColor: isDark ? Colors.grey.shade500 : null,
+                                foregroundImage: NetworkImage(
+                                  "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${snapshot.data![index]['userId']}?alt=media&",
+                                ),
+                                child: Text(
+                                  snapshot.data![index]['userName'],
+                                ),
                               ),
                             ),
                             Gaps.h10,

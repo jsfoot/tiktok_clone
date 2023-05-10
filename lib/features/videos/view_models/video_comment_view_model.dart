@@ -18,7 +18,7 @@ class VideoCommentViewModel extends AsyncNotifier<void> {
 
   Future<void> createVideoComment({required String videoId, required String comment}) async {
     final user = ref.read(authRepo).user!;
-    final profile = await _userRepository.findProfile(user.uid);
+    final profile = await _userRepository.getUserProfile(user.uid);
     await _videoCommentRepository.createVideoComment(
       VideoCommentModel(
         userName: profile!['name'],

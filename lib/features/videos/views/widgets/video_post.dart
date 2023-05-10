@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_scale_tap/flutter_scale_tap.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 import 'package:tiktok_clone/features/videos/models/video_model.dart';
 import 'package:tiktok_clone/features/videos/view_models/video_post_view_model.dart';
@@ -16,6 +17,8 @@ import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
+
+import '../../../users/views/user_profile_screen.dart';
 
 class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
@@ -334,16 +337,31 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
             child: Column(
               children: [
                 Gaps.v6,
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  foregroundImage: hasAvatar
-                      ? NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media&",
-                        )
-                      : null,
-                  child: Text(widget.videoData.creator),
+                GestureDetector(
+                  onTap: () {
+                    final creatorUid = widget.videoData.creatorUid;
+                    final myUid = ref.read(authRepo).user!.uid;
+                    if (creatorUid != myUid) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        fullscreenDialog: true,
+                        builder: (context) => UserProfileScreen(
+                          userId: creatorUid,
+                          tab: "otherUser",
+                        ),
+                      ));
+                    }
+                  },
+                  child: CircleAvatar(
+                    radius: 25,
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    foregroundImage: hasAvatar
+                        ? NetworkImage(
+                            "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media&",
+                          )
+                        : null,
+                    child: Text(widget.videoData.creator),
+                  ),
                 ),
                 Gaps.v24,
                 ScaleTap(

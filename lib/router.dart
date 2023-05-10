@@ -13,6 +13,8 @@ import 'features/inbox/views/chat_detail_screen.dart';
 import 'features/inbox/views/chat_user_list_screen.dart';
 import 'features/inbox/views/chats_screen.dart';
 import 'features/notifications/notifications_provider.dart';
+import 'features/users/views/followers_list_screen.dart';
+import 'features/users/views/followings_list_screen.dart';
 import 'features/videos/views/video_recording_screen.dart';
 
 final routerProvider = Provider((ref) {
@@ -83,6 +85,16 @@ final routerProvider = Provider((ref) {
               path: ChatUserListScreen.routeURL,
               name: ChatUserListScreen.routeName,
               builder: (context, state) => const ChatUserListScreen(),
+            ),
+            GoRoute(
+              path: FollowersListScreen.routeURL,
+              name: FollowersListScreen.routeName,
+              builder: (context, state) => const FollowersListScreen(),
+            ),
+            GoRoute(
+              path: FollowingsListScreen.routeURL,
+              name: FollowingsListScreen.routeName,
+              builder: (context, state) => const FollowingsListScreen(),
             ),
             GoRoute(
               path: VideoRecordingScreen.routeURL,

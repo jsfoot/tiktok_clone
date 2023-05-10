@@ -21,7 +21,7 @@ class ChatRoomViewModel extends AsyncNotifier<void> {
 
   Future<void> createChatRoom({required Map<String, dynamic> yourUserProfile}) async {
     final myUid = ref.read(authRepo).user!.uid;
-    final myUserProfile = await _userRepository.findProfile(myUid);
+    final myUserProfile = await _userRepository.getUserProfile(myUid);
 
     await _chatRoomRepo.createChatRoom(
         chatRoomModel: ChatRoomModel(
@@ -37,8 +37,8 @@ class ChatRoomViewModel extends AsyncNotifier<void> {
         yourUid: yourUserProfile['uid']);
   }
 
-  Future<List<Map<String, dynamic>>> getUserList() async {
-    final userList = await _userRepository.getUserList();
+  Future<List<Map<String, dynamic>>> getAllUserList() async {
+    final userList = await _userRepository.getAllUserList();
 
     return userList;
   }

@@ -28,23 +28,21 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m2(value) => "${value}";
 
   static String m3(gender) =>
-      "Log in ${Intl.gender(gender, female: 'madam', male: 'sir', other: 'human')}";
+      "로그인 ${Intl.gender(gender, female: 'madam', male: 'sir', other: 'human')}";
 
-  static String m5(videoCount) =>
-      "Create a profile, follow other accounts, make your own videos, and more.";
+  static String m5(videoCount) => "계정을 생성하여 다른 사용자를 팔로우하거나 나만의 비디오를 만드세요.";
 
   static String m6(nameOfTheApp, when) => "${nameOfTheApp}에 가입하세요 ${when}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "alreadyHaveAnAccount":
-            MessageLookupByLibrary.simpleMessage("Already have an account?"),
-        "appleButton":
-            MessageLookupByLibrary.simpleMessage("Continue with Apple"),
+            MessageLookupByLibrary.simpleMessage("이미 계정이 있으신가요?"),
+        "appleButton": MessageLookupByLibrary.simpleMessage("Apple로 계속 진행"),
         "commentCount": m0,
         "commentTitle": m1,
         "emailPasswordButton":
-            MessageLookupByLibrary.simpleMessage("Use email & password"),
+            MessageLookupByLibrary.simpleMessage("이메일 & 비밀번호로 계속 진행"),
         "likeCount": m2,
         "logIn": m3,
         "signUpSubtitle": m5,

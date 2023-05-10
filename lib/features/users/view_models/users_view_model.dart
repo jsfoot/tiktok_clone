@@ -16,7 +16,7 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
     _authenticationRepository = ref.read(authRepo);
 
     if (_authenticationRepository.isLoggedIn) {
-      final profile = await _usersRepository.findProfile(_authenticationRepository.user!.uid);
+      final profile = await _usersRepository.getUserProfile(_authenticationRepository.user!.uid);
       if (profile != null) {
         return UserProfileModel.fromJson(profile);
       }
@@ -39,6 +39,10 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
       uid: credential.user!.uid,
       name: credential.user!.displayName ?? form["name"] ?? "Anon",
       birthday: form["birthday"] ?? "undefined",
+      followings: [],
+      followers: [],
+      numOfFollowers: 0,
+      numOfFollowings: 0,
     );
     await _usersRepository.createProfile(profile);
     state = AsyncValue.data(profile);
@@ -70,6 +74,25 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
       (doc) => doc.data(),
     );
     return likes.toList();
+  }
+
+  Future<Map<String, dynamic>?> getOtherUserProfile(String userId) async {
+    final profile = await _usersRepository.getUserProfile(userId);
+    return profile;
+  }
+
+  Future<void> addFollowing(String targetUid) async {
+    final myUid = _authenticationRepository.user!.uid;
+    if (myUid != targetUid) {
+      await _usersRepository.addFollowingList(targetUid, myUid);
+    }
+  }
+
+  Future<void> unfollow(String targetUid) async {
+    final myUid = _authenticationRepository.user!.uid;
+    if (myUid != targetUid) {
+      await _usersRepository.unfollow(targetUid, myUid);
+    }
   }
 }
 

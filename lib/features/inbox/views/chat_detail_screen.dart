@@ -13,6 +13,8 @@ import 'package:tiktok_clone/features/inbox/view_models/messages_view_model.dart
 import 'package:tiktok_clone/features/users/repos/user_repo.dart';
 import 'package:tiktok_clone/utils.dart';
 
+import '../../users/views/user_profile_screen.dart';
+
 class ChatDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = "chatDetail";
   static const String routeURL = "/chatDetail";
@@ -56,11 +58,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     }
     ref.read(messagesProvider(widget.chatRoomId).notifier).sendMessage(text, widget.yourUid);
     _textEditingController.text = "";
-    await _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent + 90,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.easeInOut,
-    );
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent + 100);
   }
 
   void _deleteMessage(String createdAt, bool isLast) async {
@@ -77,7 +75,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.read(messagesProvider(widget.chatRoomId)).isLoading;
-    Future<Map<String, dynamic>?> userProfile = ref.read(userRepo).findProfile(widget.yourUid);
+    Future<Map<String, dynamic>?> userProfile = ref.read(userRepo).getUserProfile(widget.yourUid);
 
     final width = MediaQuery.of(context).size.width;
     final isDark = isDarkMode(context);
@@ -95,14 +93,25 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                 horizontalTitleGap: Sizes.size8,
                 leading: Stack(
                   children: [
-                    CircleAvatar(
-                      radius: Sizes.size24,
-                      foregroundImage: NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.yourUid}?alt=media&"
-                          // "https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg",
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context) => UserProfileScreen(
+                            userId: widget.yourUid,
+                            tab: "otherUser",
                           ),
-                      child: Text(
-                        snapshot.data!['name'],
+                        ));
+                      },
+                      child: CircleAvatar(
+                        radius: Sizes.size24,
+                        foregroundImage: NetworkImage(
+                            "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.yourUid}?alt=media&"
+                            // "https://pickcon.co.kr/site/data/img_dir/2022/07/21/2022072180035_0.jpg",
+                            ),
+                        child: Text(
+                          snapshot.data!['name'],
+                        ),
                       ),
                     ),
                     Positioned(
@@ -372,192 +381,212 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                 Positioned(
                   bottom: 0,
                   width: width < Breakpoints.lg ? width : Breakpoints.lg,
-                  child: Container(
-                    color: Theme.of(context).appBarTheme.backgroundColor,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Sizes.size10,
-                        horizontal: Sizes.size10,
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _scrollController.position.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.easeOut,
+                          );
+                        },
+                        child: const Icon(
+                          Icons.arrow_circle_down,
+                          color: Colors.black54,
+                        ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (!_isWriting)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    _textEditingController.text = "\u{2764}\u{2764}\u{2764}";
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(Sizes.size32),
-                                      color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
-                                    width: Sizes.size80,
-                                    height: Sizes.size28,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: const [
-                                        Text("\u{2764}"),
-                                        Text("\u{2764}"),
-                                        Text("\u{2764}"),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Gaps.h7,
-                                GestureDetector(
-                                  onTap: () {
-                                    _textEditingController.text = "\u{1F602}\u{1F602}\u{1F602}";
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(Sizes.size28),
-                                      color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
-                                    width: Sizes.size80,
-                                    height: Sizes.size28,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: const [
-                                        Text("\u{1F602}"),
-                                        Text("\u{1F602}"),
-                                        Text("\u{1F602}"),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Gaps.h7,
-                                GestureDetector(
-                                  onTap: () {
-                                    _textEditingController.text = "\u{1F44D}\u{1F44D}\u{1F44D}";
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(Sizes.size28),
-                                      color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
-                                    width: Sizes.size80,
-                                    height: Sizes.size28,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: const [
-                                        Text("\u{1F44D}"),
-                                        Text("\u{1F44D}"),
-                                        Text("\u{1F44D}"),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Gaps.h7,
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(Sizes.size28),
-                                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
-                                  width: Sizes.size72 + Sizes.size36,
-                                  height: Sizes.size28,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      FaIcon(
-                                        FontAwesomeIcons.circlePlay,
-                                        size: Sizes.size16,
-                                      ),
-                                      Gaps.h4,
-                                      Text("Share post"),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          Gaps.v10,
-                          Row(
+                      Container(
+                        color: Theme.of(context).appBarTheme.backgroundColor,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: Sizes.size10,
+                            horizontal: Sizes.size10,
+                          ),
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Expanded(
-                                child: Container(
-                                  color: Theme.of(context).appBarTheme.backgroundColor,
-                                  height: Sizes.size40,
-                                  child: TextField(
-                                    controller: _textEditingController,
-                                    onTap: _onStartWriting,
-                                    maxLines: 5,
-                                    minLines: 1,
-                                    textInputAction: TextInputAction.newline,
-                                    cursorColor: Theme.of(context).primaryColor,
-                                    decoration: InputDecoration(
-                                      hintText: "Send a Message...",
-                                      border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(Sizes.size20),
-                                          topRight: Radius.circular(Sizes.size20),
-                                          bottomLeft: Radius.circular(Sizes.size20),
-                                          bottomRight: Radius.zero,
+                              if (!_isWriting)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        _textEditingController.text = "\u{2764}\u{2764}\u{2764}";
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(Sizes.size32),
+                                          color:
+                                              isDark ? Colors.grey.shade800 : Colors.grey.shade200,
                                         ),
-                                        borderSide: BorderSide.none,
+                                        padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
+                                        width: Sizes.size80,
+                                        height: Sizes.size28,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: const [
+                                            Text("\u{2764}"),
+                                            Text("\u{2764}"),
+                                            Text("\u{2764}"),
+                                          ],
+                                        ),
                                       ),
-                                      filled: true,
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: Sizes.size10,
+                                    ),
+                                    Gaps.h7,
+                                    GestureDetector(
+                                      onTap: () {
+                                        _textEditingController.text = "\u{1F602}\u{1F602}\u{1F602}";
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(Sizes.size28),
+                                          color:
+                                              isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
+                                        width: Sizes.size80,
+                                        height: Sizes.size28,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: const [
+                                            Text("\u{1F602}"),
+                                            Text("\u{1F602}"),
+                                            Text("\u{1F602}"),
+                                          ],
+                                        ),
                                       ),
-                                      suffixIcon: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          const FaIcon(
-                                            FontAwesomeIcons.faceLaugh,
+                                    ),
+                                    Gaps.h7,
+                                    GestureDetector(
+                                      onTap: () {
+                                        _textEditingController.text = "\u{1F44D}\u{1F44D}\u{1F44D}";
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(Sizes.size28),
+                                          color:
+                                              isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
+                                        width: Sizes.size80,
+                                        height: Sizes.size28,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: const [
+                                            Text("\u{1F44D}"),
+                                            Text("\u{1F44D}"),
+                                            Text("\u{1F44D}"),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Gaps.h7,
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(Sizes.size28),
+                                        color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
+                                      width: Sizes.size72 + Sizes.size36,
+                                      height: Sizes.size28,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: const [
+                                          FaIcon(
+                                            FontAwesomeIcons.circlePlay,
+                                            size: Sizes.size16,
                                           ),
-                                          Gaps.h10,
-                                          if (_isWriting)
-                                            GestureDetector(
-                                              onTap: _onStopWriting,
-                                              child: FaIcon(
-                                                FontAwesomeIcons.circleArrowUp,
-                                                color: Theme.of(context).primaryColor,
-                                                size: Sizes.size20,
-                                              ),
-                                            ),
-                                          if (_isWriting) Gaps.h10,
+                                          Gaps.h4,
+                                          Text("Share post"),
                                         ],
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
-                              Gaps.h8,
-                              GestureDetector(
-                                onTap: isLoading ? null : _onSendPressed,
-                                child: CircleAvatar(
-                                  radius: 18,
-                                  backgroundColor:
-                                      isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      right: Sizes.size3,
-                                    ),
-                                    child: FaIcon(
-                                      isLoading
-                                          ? FontAwesomeIcons.hourglass
-                                          : FontAwesomeIcons.solidPaperPlane,
-                                      color: Colors.white,
-                                      size: Sizes.size20,
+                              Gaps.v10,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      color: Theme.of(context).appBarTheme.backgroundColor,
+                                      height: Sizes.size40,
+                                      child: TextField(
+                                        controller: _textEditingController,
+                                        onTap: _onStartWriting,
+                                        maxLines: 5,
+                                        minLines: 1,
+                                        textInputAction: TextInputAction.newline,
+                                        cursorColor: Theme.of(context).primaryColor,
+                                        decoration: InputDecoration(
+                                          hintText: "Send a Message...",
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(Sizes.size20),
+                                              topRight: Radius.circular(Sizes.size20),
+                                              bottomLeft: Radius.circular(Sizes.size20),
+                                              bottomRight: Radius.zero,
+                                            ),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          filled: true,
+                                          contentPadding: const EdgeInsets.symmetric(
+                                            horizontal: Sizes.size10,
+                                          ),
+                                          suffixIcon: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              const FaIcon(
+                                                FontAwesomeIcons.faceLaugh,
+                                              ),
+                                              Gaps.h10,
+                                              if (_isWriting)
+                                                GestureDetector(
+                                                  onTap: _onStopWriting,
+                                                  child: FaIcon(
+                                                    FontAwesomeIcons.circleArrowUp,
+                                                    color: Theme.of(context).primaryColor,
+                                                    size: Sizes.size20,
+                                                  ),
+                                                ),
+                                              if (_isWriting) Gaps.h10,
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  Gaps.h8,
+                                  GestureDetector(
+                                    onTap: isLoading ? null : _onSendPressed,
+                                    child: CircleAvatar(
+                                      radius: 18,
+                                      backgroundColor:
+                                          isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: Sizes.size3,
+                                        ),
+                                        child: FaIcon(
+                                          isLoading
+                                              ? FontAwesomeIcons.hourglass
+                                              : FontAwesomeIcons.solidPaperPlane,
+                                          color: Colors.white,
+                                          size: Sizes.size20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ],

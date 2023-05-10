@@ -2,12 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/settings/settings_screen.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
+import 'package:tiktok_clone/features/users/views/followers_list_screen.dart';
+import 'package:tiktok_clone/features/users/views/followings_list_screen.dart';
 import 'package:tiktok_clone/features/users/views/update_profile_screen.dart';
 import 'package:tiktok_clone/features/users/views/widgets/avatar.dart';
 import 'package:tiktok_clone/features/users/views/widgets/persistent_icon_bar.dart';
@@ -16,12 +18,12 @@ import 'package:tiktok_clone/features/users/views/widgets/persistent_tab_bar.dar
 import '../../../constants/gaps.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
-  // final String username;
+  final String userId;
   final String tab;
 
   const UserProfileScreen({
     Key? key,
-    // required this.username,
+    required this.userId,
     required this.tab,
   }) : super(key: key);
 
@@ -30,6 +32,8 @@ class UserProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
+  bool isFollow = false;
+
   void _onGearPressed() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -42,29 +46,50 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
     );
   }
 
+  void _onFollowPressed(String targetUserId) async {
+    await ref.read(usersProvider.notifier).addFollowing(targetUserId);
+    setState(() {
+      isFollow = true;
+    });
+  }
+
+  void _onUnfollowPressed(String targetUserId) async {
+    await ref.read(usersProvider.notifier).unfollow(targetUserId);
+    setState(() {
+      isFollow = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final List? followings = ref.read(usersProvider).value?.followings;
+    if (followings != null) {
+      if (followings.contains(widget.userId)) {
+        setState(() {
+          isFollow = true;
+        });
+      }
+    }
+
     final width = MediaQuery.of(context).size.width;
-
-    final bio = ref.read(usersProvider).value?.bio;
-    final link = ref.read(usersProvider).value?.link;
-
-    final userId = ref.read(authRepo).user!.uid;
+    Future<Map<String, dynamic>?> userData =
+        ref.read(usersProvider.notifier).getOtherUserProfile(widget.userId);
 
     Future<List<Map<String, dynamic>>> videoList =
-        ref.read(usersProvider.notifier).getUserVideosList(userId);
+        ref.read(usersProvider.notifier).getUserVideosList(widget.userId);
 
     Future<List<Map<String, dynamic>>> likeList =
-        ref.read(usersProvider.notifier).getUserLikeList(userId);
+        ref.read(usersProvider.notifier).getUserLikeList(widget.userId);
 
-    return ref.watch(usersProvider).when(
-          error: (error, stackTrace) => Center(
-            child: Text(error.toString()),
-          ),
-          loading: () => const Center(
-            child: CircularProgressIndicator.adaptive(),
-          ),
-          data: (data) => Scaffold(
+    return FutureBuilder(
+      future: userData,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          return Scaffold(
             backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             body: SafeArea(
               child: DefaultTabController(
@@ -79,16 +104,19 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                       headerSliverBuilder: (context, innerBoxIsScrolled) {
                         return [
                           SliverAppBar(
-                            title: Text(data.name),
+                            title: Text(
+                              snapshot.data!['name'].toString(),
+                            ),
                             centerTitle: true,
                             actions: [
-                              IconButton(
-                                onPressed: _onPersonPressed,
-                                icon: const Icon(
-                                  Icons.person_2_outlined,
-                                  size: Sizes.size20,
+                              if (widget.tab != "otherUser")
+                                IconButton(
+                                  onPressed: _onPersonPressed,
+                                  icon: const Icon(
+                                    Icons.person_2_outlined,
+                                    size: Sizes.size20,
+                                  ),
                                 ),
-                              ),
                               IconButton(
                                 onPressed: _onGearPressed,
                                 icon: const FaIcon(
@@ -104,16 +132,16 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                 children: [
                                   Gaps.v20,
                                   Avatar(
-                                    name: data.name,
-                                    hasAvatar: data.hasAvatar,
-                                    uid: data.uid,
+                                    name: snapshot.data!['name'],
+                                    hasAvatar: snapshot.data!['hasAvatar'],
+                                    uid: snapshot.data!['uid'],
                                   ),
                                   Gaps.v20,
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "@${data.name}",
+                                        "@${snapshot.data!['name']}",
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: Sizes.size18,
@@ -134,25 +162,35 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Text(
-                                              "97",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: Sizes.size18,
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (widget.tab != "otherUser") {
+                                              context.pushNamed(
+                                                FollowingsListScreen.routeName,
+                                                extra: snapshot.data!['uid'],
+                                              );
+                                            }
+                                          },
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                snapshot.data!['numOfFollowings'].toString(),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: Sizes.size18,
+                                                ),
                                               ),
-                                            ),
-                                            Gaps.v2,
-                                            Text(
-                                              "Following",
-                                              style: TextStyle(
-                                                color: Colors.grey.shade500,
+                                              Gaps.v2,
+                                              Text(
+                                                "Following",
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade500,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                         VerticalDivider(
                                           width: Sizes.size32,
@@ -161,23 +199,31 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                           indent: Sizes.size12,
                                           endIndent: Sizes.size16,
                                         ),
-                                        Column(
-                                          children: [
-                                            const Text(
-                                              "10M",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: Sizes.size18,
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (widget.tab != "otherUser") {
+                                              context.pushNamed(FollowersListScreen.routeName,
+                                                  extra: snapshot.data!['uid']);
+                                            }
+                                          },
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                snapshot.data!['numOfFollowers'].toString(),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: Sizes.size18,
+                                                ),
                                               ),
-                                            ),
-                                            Gaps.v2,
-                                            Text(
-                                              "Followers",
-                                              style: TextStyle(
-                                                color: Colors.grey.shade500,
+                                              Gaps.v2,
+                                              Text(
+                                                "Followers",
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade500,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                         VerticalDivider(
                                           width: Sizes.size32,
@@ -214,26 +260,56 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: Sizes.size11,
-                                            horizontal: Sizes.size52,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).primaryColor,
-                                            borderRadius: const BorderRadius.all(
-                                              Radius.circular(
-                                                Sizes.size3,
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (widget.tab == "otherUser" && !isFollow) {
+                                              _onFollowPressed(snapshot.data!['uid']);
+                                            } else if (widget.tab == "otherUser" && isFollow) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  title: Text("Unfollow ${snapshot.data!['name']}"),
+                                                  content: const Text("Are you sure?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        _onUnfollowPressed(snapshot.data!['uid']);
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text("Yes"),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () => Navigator.of(context).pop(),
+                                                      child: const Text("No"),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: Sizes.size11,
+                                              horizontal: isFollow ? Sizes.size40 : Sizes.size52,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: isFollow
+                                                  ? Colors.grey.shade400
+                                                  : Theme.of(context).primaryColor,
+                                              borderRadius: const BorderRadius.all(
+                                                Radius.circular(
+                                                  Sizes.size3,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          child: const Text(
-                                            "Follow",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
+                                            child: Text(
+                                              isFollow ? "Followed " : "Follow",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              textAlign: TextAlign.center,
                                             ),
-                                            textAlign: TextAlign.center,
                                           ),
                                         ),
                                         Gaps.h4,
@@ -283,7 +359,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       horizontal: Sizes.size32,
                                     ),
                                     child: Text(
-                                      bio ?? "undifined",
+                                      snapshot.data!['bio'],
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -297,7 +373,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       ),
                                       Gaps.h4,
                                       Text(
-                                        link ?? "undifined",
+                                        snapshot.data!['link'],
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -319,16 +395,16 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       Column(
                                         children: [
                                           Avatar(
-                                            name: data.name,
-                                            hasAvatar: data.hasAvatar,
-                                            uid: data.uid,
+                                            name: snapshot.data!['name'],
+                                            hasAvatar: snapshot.data!['hasAvatar'],
+                                            uid: snapshot.data!['uid'],
                                           ),
                                           Gaps.v8,
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "@${data.name}",
+                                                "@${snapshot.data!['name']}",
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.w600,
                                                   fontSize: Sizes.size18,
@@ -357,9 +433,10 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                                   children: [
                                                     Column(
                                                       children: [
-                                                        const Text(
-                                                          "97",
-                                                          style: TextStyle(
+                                                        Text(
+                                                          snapshot.data!['numOfFollowings']
+                                                              .toString(),
+                                                          style: const TextStyle(
                                                             fontWeight: FontWeight.bold,
                                                             fontSize: Sizes.size18,
                                                           ),
@@ -382,9 +459,10 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                                     ),
                                                     Column(
                                                       children: [
-                                                        const Text(
-                                                          "10M",
-                                                          style: TextStyle(
+                                                        Text(
+                                                          snapshot.data!['numOfFollowings']
+                                                              .toString(),
+                                                          style: const TextStyle(
                                                             fontWeight: FontWeight.bold,
                                                             fontSize: Sizes.size18,
                                                           ),
@@ -432,26 +510,61 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              Container(
-                                                padding: const EdgeInsets.symmetric(
-                                                  vertical: Sizes.size11,
-                                                  horizontal: Sizes.size52,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: Theme.of(context).primaryColor,
-                                                  borderRadius: const BorderRadius.all(
-                                                    Radius.circular(
-                                                      Sizes.size3,
+                                              GestureDetector(
+                                                onTap: () {
+                                                  if (widget.tab == "otherUser" && !isFollow) {
+                                                    _onFollowPressed(snapshot.data!['uid']);
+                                                  } else if (widget.tab == "otherUser" &&
+                                                      isFollow) {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) => AlertDialog(
+                                                        title: Text(
+                                                            "Unfollow ${snapshot.data!['name']}"),
+                                                        content: const Text("Are you sure?"),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              _onUnfollowPressed(
+                                                                  snapshot.data!['uid']);
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                            child: const Text("Yes"),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.of(context).pop(),
+                                                            child: const Text("No"),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: Sizes.size11,
+                                                    horizontal:
+                                                        isFollow ? Sizes.size40 : Sizes.size52,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: isFollow
+                                                        ? Colors.grey.shade400
+                                                        : Theme.of(context).primaryColor,
+                                                    borderRadius: const BorderRadius.all(
+                                                      Radius.circular(
+                                                        Sizes.size3,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                child: const Text(
-                                                  "Follow",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w600,
+                                                  child: Text(
+                                                    isFollow ? "Following" : "Follow",
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                    textAlign: TextAlign.center,
                                                   ),
-                                                  textAlign: TextAlign.center,
                                                 ),
                                               ),
                                               Gaps.h4,
@@ -518,7 +631,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       ),
                                       Gaps.h4,
                                       Text(
-                                        link ?? "undifined",
+                                        snapshot.data!['link'],
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -733,7 +846,9 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                 ),
               ),
             ),
-          ),
-        );
+          );
+        }
+      },
+    );
   }
 }

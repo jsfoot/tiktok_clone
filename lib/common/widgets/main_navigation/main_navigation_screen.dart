@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_scale_tap/flutter_scale_tap.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/nav_tab.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/post_video_button.dart';
+import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/users/views/user_profile_screen.dart';
 import 'package:tiktok_clone/utils.dart';
 
@@ -14,7 +16,7 @@ import '../../../features/inbox/views/inbox_screen.dart';
 import '../../../features/videos/views/video_recording_screen.dart';
 import '../../../features/videos/views/video_timeline_screen.dart';
 
-class MainNavigationScreen extends StatefulWidget {
+class MainNavigationScreen extends ConsumerStatefulWidget {
   static const String routeName = "mainNavigation";
   final String tab;
 
@@ -24,10 +26,10 @@ class MainNavigationScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+  ConsumerState<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState extends State<MainNavigationScreen> {
+class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   final List<String> _tabs = [
     "home",
     "discover",
@@ -52,6 +54,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = isDarkMode(context);
+    final myUid = ref.read(authRepo).user!.uid;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -72,8 +75,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
           Offstage(
             offstage: _selectedIndex != 4,
-            child: const UserProfileScreen(
-              // username: "진수",
+            child: UserProfileScreen(
+              userId: myUid,
               tab: "",
             ),
           ),

@@ -13,7 +13,7 @@ class UserRepository {
     await _db.collection("users").doc(profile.uid).set(profile.toJson());
   }
 
-  Future<Map<String, dynamic>?> findProfile(String uid) async {
+  Future<Map<String, dynamic>?> getUserProfile(String uid) async {
     final doc = await _db.collection("users").doc(uid).get();
     return doc.data();
   }
@@ -27,12 +27,36 @@ class UserRepository {
     await _db.collection("users").doc(uid).update(data);
   }
 
+  Future<void> addFollowingList(String myUid, String targetUid) async {
+    await _db.collection("users").doc(myUid).update({
+      "followers": FieldValue.arrayUnion([targetUid]),
+      "numOfFollowers": FieldValue.increment(1),
+    });
+
+    await _db.collection("users").doc(targetUid).update({
+      "followings": FieldValue.arrayUnion([myUid]),
+      "numOfFollowings": FieldValue.increment(1),
+    });
+  }
+
+  Future<void> unfollow(String myUid, String targetUid) async {
+    await _db.collection("users").doc(myUid).update({
+      "followers": FieldValue.arrayRemove([targetUid]),
+      "numOfFollowers": FieldValue.increment(-1),
+    });
+
+    await _db.collection("users").doc(targetUid).update({
+      "followings": FieldValue.arrayRemove([myUid]),
+      "numOfFollowings": FieldValue.increment(-1),
+    });
+  }
+
   Future<bool> getIsLiked(String uid, String videoId) async {
     final likes = await _db.collection("users").doc(uid).collection("likes").doc(videoId).get();
     return likes.exists;
   }
 
-  Future<List<Map<String, dynamic>>> getUserList() async {
+  Future<List<Map<String, dynamic>>> getAllUserList() async {
     List<Map<String, dynamic>> userList = [];
     final usersQuery = _db.collection("users").get();
 

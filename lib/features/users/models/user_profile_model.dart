@@ -7,6 +7,10 @@ class UserProfileModel {
   final String link;
   final String birthday;
   final bool hasAvatar;
+  final List<dynamic> followings;
+  final List<dynamic> followers;
+  final int numOfFollowers;
+  final int numOfFollowings;
 
   UserProfileModel({
     required this.uid,
@@ -16,6 +20,10 @@ class UserProfileModel {
     required this.link,
     required this.birthday,
     required this.hasAvatar,
+    required this.followings,
+    required this.followers,
+    required this.numOfFollowers,
+    required this.numOfFollowings,
   });
 
   UserProfileModel.empty()
@@ -25,7 +33,11 @@ class UserProfileModel {
         bio = "",
         link = "",
         birthday = "",
-        hasAvatar = false;
+        hasAvatar = false,
+        followings = [],
+        followers = [],
+        numOfFollowers = 0,
+        numOfFollowings = 0;
 
   UserProfileModel.fromJson(Map<String, dynamic> json)
       : uid = json["uid"],
@@ -34,7 +46,11 @@ class UserProfileModel {
         bio = json["bio"],
         link = json["link"],
         birthday = json["birthday"],
-        hasAvatar = json["hasAvatar"];
+        hasAvatar = json["hasAvatar"],
+        followings = json['followings'],
+        followers = json['followers'],
+        numOfFollowers = json['numOfFollowers'],
+        numOfFollowings = json['numOfFollowings'];
 
   Map<String, dynamic> toJson() {
     return {
@@ -45,6 +61,10 @@ class UserProfileModel {
       "link": link,
       "birthday": birthday,
       "hasAvatar": hasAvatar,
+      "followings": followings,
+      "followers": followers,
+      "numOfFollowers": numOfFollowers,
+      "numOfFollowings": numOfFollowings,
     };
   }
 
@@ -56,6 +76,10 @@ class UserProfileModel {
     String? link,
     String? birthday,
     bool? hasAvatar,
+    List<dynamic>? followings,
+    List<dynamic>? followers,
+    int? numOfFollowers,
+    int? numOfFollowings,
   }) {
     return UserProfileModel(
       uid: uid ?? this.uid,
@@ -65,6 +89,10 @@ class UserProfileModel {
       link: link ?? this.link,
       birthday: birthday ?? this.birthday,
       hasAvatar: hasAvatar ?? this.hasAvatar,
+      followings: followings ?? this.followings,
+      followers: followers ?? this.followers,
+      numOfFollowers: numOfFollowers ?? this.numOfFollowers,
+      numOfFollowings: numOfFollowings ?? this.numOfFollowings,
     );
   }
 }

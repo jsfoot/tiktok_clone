@@ -108,7 +108,8 @@ class _ChatUserListScreenState extends ConsumerState<ChatUserListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future<List<Map<String, dynamic>>> userList = ref.read(chatRoomProvider.notifier).getUserList();
+    Future<List<Map<String, dynamic>>> userList =
+        ref.read(chatRoomProvider.notifier).getAllUserList();
 
     return Scaffold(
       appBar: AppBar(
