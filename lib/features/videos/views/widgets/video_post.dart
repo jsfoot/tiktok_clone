@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,6 +54,14 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
   int _maxLines = 1;
   bool _isSeeMoreClicked = false;
   String _seeMoreText = "See more";
+
+  List<String> assetsList = [
+    "assets/videos/test_video_1.mp4",
+    "assets/videos/test_video_2.mp4",
+    "assets/videos/test_video_3.mp4",
+    "assets/videos/test_video_4.mp4",
+    "assets/videos/test_video_5.mp4",
+  ];
 
   @override
   void initState() {
@@ -109,7 +119,8 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
 
   void _initVideoPlayer() async {
     // _videoPlayerController = VideoPlayerController.network(widget.videoData.fileUrl);
-    _videoPlayerController = VideoPlayerController.asset("assets/videos/test_video_2.mp4");
+    int index = Random().nextInt(5);
+    _videoPlayerController = VideoPlayerController.asset(assetsList[index]);
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
 
@@ -181,6 +192,29 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
             maxWidth: Breakpoints.lg,
           ),
           child: VideoComments(videoId: widget.videoData.videoId),
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+    );
+    _onTogglePause();
+  }
+
+  void _onAvatarTap(String creatorUid) async {
+    if (_videoPlayerController.value.isPlaying) {
+      _onTogglePause();
+    }
+
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      useSafeArea: true,
+      context: context,
+      builder: (context) => Center(
+        heightFactor: 1.0,
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: Breakpoints.lg,
+          ),
+          child: UserProfileScreen(userId: creatorUid, tab: "otherUser"),
         ),
       ),
       backgroundColor: Colors.transparent,
@@ -342,13 +376,7 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                     final creatorUid = widget.videoData.creatorUid;
                     final myUid = ref.read(authRepo).user!.uid;
                     if (creatorUid != myUid) {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        fullscreenDialog: true,
-                        builder: (context) => UserProfileScreen(
-                          userId: creatorUid,
-                          tab: "otherUser",
-                        ),
-                      ));
+                      _onAvatarTap(creatorUid);
                     }
                   },
                   child: CircleAvatar(

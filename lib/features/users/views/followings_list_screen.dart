@@ -22,11 +22,22 @@ class FollowingsListScreen extends ConsumerStatefulWidget {
 }
 
 class _FollowingsListScreenState extends ConsumerState<FollowingsListScreen> {
-  void _onTileTap(String userId) {
-    Navigator.of(context).push(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (context) => UserProfileScreen(userId: userId, tab: "otherUser"),
-    ));
+  Future<void> _onTileTap(String userId) async {
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      useSafeArea: true,
+      context: context,
+      builder: (context) => Center(
+        heightFactor: 1.0,
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: Breakpoints.lg,
+          ),
+          child: UserProfileScreen(userId: userId, tab: "otherUser"),
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+    );
   }
 
   Widget _makeTile(int index, snapshot) {
