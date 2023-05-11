@@ -55,7 +55,11 @@ class Avatar extends ConsumerWidget {
                   ? NetworkImage(
                       "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F$uid?alt=media&")
                   : null,
-              child: Text(name),
+              child: Text(
+                name,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+              ),
             ),
     );
   }

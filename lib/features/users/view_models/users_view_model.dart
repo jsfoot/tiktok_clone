@@ -76,7 +76,7 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
     return likes.toList();
   }
 
-  Future<Map<String, dynamic>?> getOtherUserProfile(String userId) async {
+  Future<Map<String, dynamic>?> getUserProfile(String userId) async {
     final profile = await _usersRepository.getUserProfile(userId);
     return profile;
   }

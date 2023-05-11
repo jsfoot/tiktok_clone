@@ -124,6 +124,8 @@ class _VideoCommentsState extends ConsumerState<VideoComments> {
                                 ),
                                 child: Text(
                                   snapshot.data![index]['userName'],
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
@@ -186,6 +188,8 @@ class _VideoCommentsState extends ConsumerState<VideoComments> {
                                 foregroundColor: Colors.white,
                                 child: Text(
                                   userName,
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                               Gaps.h10,

@@ -111,6 +111,8 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                             ),
                         child: Text(
                           snapshot.data!['name'],
+                          maxLines: 1,
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),

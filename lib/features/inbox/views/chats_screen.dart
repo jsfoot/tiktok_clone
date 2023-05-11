@@ -91,6 +91,8 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
         ),
         child: Text(
           yourName,
+          maxLines: 1,
+          textAlign: TextAlign.center,
         ),
       ),
       title: Row(

@@ -8,6 +8,7 @@ import 'package:tiktok_clone/features/users/views/user_profile_screen.dart';
 
 import '../../../constants/breakpoints.dart';
 import '../../../constants/sizes.dart';
+import '../../authentication/repos/authentication_repo.dart';
 
 class FollowingsListScreen extends ConsumerStatefulWidget {
   static const String routeName = "followingsList";
@@ -57,6 +58,8 @@ class _FollowingsListScreenState extends ConsumerState<FollowingsListScreen> {
         ),
         child: Text(
           snapshot!.data['name'],
+          maxLines: 1,
+          textAlign: TextAlign.center,
         ),
       ),
       title: Row(
@@ -84,61 +87,75 @@ class _FollowingsListScreenState extends ConsumerState<FollowingsListScreen> {
   }
 
   Future<Map<String, dynamic>?> getOtherUserProfile(String userId) async {
-    final userProfile = await ref.read(usersProvider.notifier).getOtherUserProfile(userId);
+    final userProfile = await ref.read(usersProvider.notifier).getUserProfile(userId);
     return userProfile;
   }
 
   @override
   Widget build(BuildContext context) {
-    final List followings = ref.read(usersProvider).value!.followings;
+    final myUid = ref.read(authRepo).user!.uid;
+    Future<Map<String, dynamic>?> myProfile =
+        ref.read(usersProvider.notifier).getUserProfile(myUid);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "followings",
-        ),
-        centerTitle: true,
-        elevation: 1,
-      ),
-      body: Center(
-        child: Container(
-          constraints: const BoxConstraints(
-            maxWidth: Breakpoints.lg,
-          ),
-          child: ListView.separated(
-            separatorBuilder: (context, index) => const Divider(
-              thickness: 0.5,
-              indent: Sizes.size12,
-              endIndent: Sizes.size12,
-              height: 0.5,
+    return FutureBuilder(
+      future: myProfile,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                "followings",
+              ),
+              centerTitle: true,
+              elevation: 1,
             ),
-            padding: const EdgeInsets.symmetric(
-              vertical: Sizes.size10,
-            ),
-            itemCount: followings.length,
-            itemBuilder: (context, index) {
-              Future<Map<String, dynamic>?> userProfile = getOtherUserProfile(followings[index]);
+            body: Center(
+              child: Container(
+                constraints: const BoxConstraints(
+                  maxWidth: Breakpoints.lg,
+                ),
+                child: ListView.separated(
+                  separatorBuilder: (context, index) => const Divider(
+                    thickness: 0.5,
+                    indent: Sizes.size12,
+                    endIndent: Sizes.size12,
+                    height: 0.5,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: Sizes.size10,
+                  ),
+                  itemCount: snapshot.data!['followings'].length,
+                  itemBuilder: (context, index) {
+                    Future<Map<String, dynamic>?> userProfile =
+                        getOtherUserProfile(snapshot.data!['followings'][index]);
 
-              return FutureBuilder(
-                future: userProfile,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        _makeTile(index, snapshot),
-                      ],
+                    return FutureBuilder(
+                      future: userProfile,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Column(
+                            children: [
+                              _makeTile(index, snapshot),
+                            ],
+                          );
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
                     );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              );
-            },
-          ),
-        ),
-      ),
+                  },
+                ),
+              ),
+            ),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 }

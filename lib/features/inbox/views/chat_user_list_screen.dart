@@ -36,6 +36,8 @@ class _ChatUserListScreenState extends ConsumerState<ChatUserListScreen> {
         ),
         child: Text(
           snapshot.data![index]['name'],
+          maxLines: 1,
+          textAlign: TextAlign.center,
         ),
       ),
       title: Row(
@@ -129,6 +131,8 @@ class _ChatUserListScreenState extends ConsumerState<ChatUserListScreen> {
         future: userList,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            final myUid = ref.read(authRepo).user!.uid;
+            snapshot.data!.removeWhere((element) => element['uid'] == myUid);
             return Center(
               child: Container(
                 constraints: const BoxConstraints(

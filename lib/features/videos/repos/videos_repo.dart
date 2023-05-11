@@ -41,6 +41,8 @@ class VideosRepository {
   }
 
   Future<void> likeVideo(String videoId, String userId, VideoModel videoData) async {
+    final videoQuery = _db.collection("videos").doc(videoId);
+
     final likeQuery = _db.collection("likes").doc("${videoId}000$userId");
     final like = await likeQuery.get();
 
@@ -51,7 +53,10 @@ class VideosRepository {
         "videoId": videoId,
         "thumbnailUrl": videoData.thumbnailUrl,
       });
+      await videoQuery.update({"likes": FieldValue.increment(1)});
     } else {
+      await videoQuery.update({"likes": FieldValue.increment(-1)});
+
       likeQuery.delete();
     }
 

@@ -233,8 +233,10 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
     });
   }
 
-  void _onLikeTap() {
-    ref.read(videoPostProvider(widget.videoData.videoId).notifier).likeVideo(widget.videoData);
+  void _onLikeTap() async {
+    await ref
+        .read(videoPostProvider(widget.videoData.videoId).notifier)
+        .likeVideo(widget.videoData);
 
     if (_isLiked) {
       _likeCounts -= 1;
@@ -388,7 +390,11 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                             "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.videoData.creatorUid}?alt=media&",
                           )
                         : null,
-                    child: Text(widget.videoData.creator),
+                    child: Text(
+                      widget.videoData.creator,
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
                 Gaps.v24,
