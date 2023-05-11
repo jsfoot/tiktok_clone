@@ -1,4 +1,4 @@
-# TikTok Clone (작성중)
+# TikTok Clone
 
 # 목차
 
