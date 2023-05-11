@@ -1,16 +1,35 @@
-# tiktok_clone
+# TikTok Clone
 
-A new Flutter project.
+# 목차
 
-## Getting Started
+# 1. 프로젝트 개요
 
-This project is a starting point for a Flutter application.
+## 1.1 프로젝트 개요
 
-A few resources to get you started if this is your first Flutter project:
+대표적 숏폼 플랫폼인 TikTok의 UI와 기능을 Flutter 프레임워크를 사용하여 구현하는 클론코딩 프로젝트 입니다.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+해당 프로젝트를 통해 Flutter 프레임워크와 Dart 언어를 이해하고 능숙하게 사용할 수 있도록 하는 것이 목표입니다.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+개발기간 : 23.03.01 ~ 23.04.23 약 7주
+
+마이너 업데이트 및 기능 추가는 지속 중
+
+## 1.2 요구사항
+
+### 기술적 요구사항
+
+## 1.2 프로젝트 기능소개
+
+# 2. 프로젝트 구조
+
+## 2.1 프로젝트 전체 구조
+
+## 2.2 패키지별 구조
+
+## 2.3 Backend 구조
+
+## 2.4 Frontend 구조
+
+## 2.5 commom 구조
+
+# 3. 마치며
