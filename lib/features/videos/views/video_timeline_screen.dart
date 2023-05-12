@@ -29,10 +29,10 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
 
   void _onVideoFinished() {
     return;
-    _pageController.nextPage(
-      duration: _scrollDuration,
-      curve: _scrollCurve,
-    );
+    // _pageController.nextPage(
+    //   duration: _scrollDuration,
+    //   curve: _scrollCurve,
+    // );
   }
 
   @override

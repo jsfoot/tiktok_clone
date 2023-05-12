@@ -5,14 +5,19 @@ import 'package:tiktok_clone/features/videos/models/video_comment_model.dart';
 class VideoCommentRepository {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Future<void> createVideoComment(VideoCommentModel comment, String videoId) async {
-    await _db.collection("videos").doc(videoId).collection("comments").add(comment.toJson());
+  Future<void> createVideoComment(
+      {required VideoCommentModel commentModel,
+      required String videoId,
+      required String commentId}) async {
+    await _db
+        .collection("videos")
+        .doc(videoId)
+        .collection("comments")
+        .doc(commentId)
+        .set(commentModel.toJson());
 
-    final query = await _db.collection("videos").doc(videoId).get();
-    final data = query.data();
-    final commentsCount = data!['comments'];
     await _db.collection("videos").doc(videoId).update({
-      "comments": commentsCount + 1,
+      "comments": FieldValue.increment(1),
     });
   }
 
@@ -24,6 +29,27 @@ class VideoCommentRepository {
         .orderBy("createdAt")
         .get();
     return query.docs;
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getVideoSingleComment(
+      {required String videoId, required String commentId}) async {
+    return await _db.collection("videos").doc(videoId).collection("comments").doc(commentId).get();
+  }
+
+  Future<void> increaseLike(
+      {required String commentId, required String videoId, required String userId}) async {
+    await _db.collection("videos").doc(videoId).collection("comments").doc(commentId).update({
+      "likes": FieldValue.increment(1),
+      "likedUsers": FieldValue.arrayUnion([userId]),
+    });
+  }
+
+  Future<void> decreaseLike(
+      {required String commentId, required String videoId, required String userId}) async {
+    await _db.collection("videos").doc(videoId).collection("comments").doc(commentId).update({
+      "likes": FieldValue.increment(-1),
+      "likedUsers": FieldValue.arrayRemove([userId]),
+    });
   }
 }
 

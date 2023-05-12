@@ -31,9 +31,9 @@ class PersistentIconBar extends SliverPersistentHeaderDelegate {
                   vertical: Sizes.size6,
                   horizontal: Sizes.size8,
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.video_collection_outlined),
                     Gaps.h4,
                     Text(
@@ -58,9 +58,9 @@ class PersistentIconBar extends SliverPersistentHeaderDelegate {
                   vertical: Sizes.size6,
                   horizontal: Sizes.size8,
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.video_collection_outlined),
                     Gaps.h4,
                     Text(
@@ -85,9 +85,9 @@ class PersistentIconBar extends SliverPersistentHeaderDelegate {
                   vertical: Sizes.size6,
                   horizontal: Sizes.size8,
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.video_collection_outlined),
                     Gaps.h4,
                     Text(
@@ -112,9 +112,9 @@ class PersistentIconBar extends SliverPersistentHeaderDelegate {
                   vertical: Sizes.size6,
                   horizontal: Sizes.size8,
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.video_collection_outlined),
                     Gaps.h4,
                     Text(
@@ -139,9 +139,9 @@ class PersistentIconBar extends SliverPersistentHeaderDelegate {
                   vertical: Sizes.size6,
                   horizontal: Sizes.size8,
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.video_collection_outlined),
                     Gaps.h4,
                     Text(

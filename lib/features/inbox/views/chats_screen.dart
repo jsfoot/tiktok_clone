@@ -21,11 +21,11 @@ class ChatsScreen extends ConsumerStatefulWidget {
 }
 
 class _ChatsScreenState extends ConsumerState<ChatsScreen> {
-  final GlobalKey<AnimatedListState> _key = GlobalKey<AnimatedListState>();
+  // final GlobalKey<AnimatedListState> _key = GlobalKey<AnimatedListState>();
 
-  final Duration _duration = const Duration(milliseconds: 500);
+  // final Duration _duration = const Duration(milliseconds: 500);
 
-  void _addItem() {
+  void _findChatUser() {
     context.pushNamed(ChatUserListScreen.routeName);
 
     // if (_key.currentState != null) {
@@ -37,7 +37,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     // }
   }
 
-  void _deleteItem(int index) {
+  void _leaveChatRoom(int index) {
     // if (_key.currentState != null) {
     //   _key.currentState!.removeItem(
     //       index,
@@ -83,7 +83,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
 
     return ListTile(
       onTap: () => _onChatTap(chatRoomId, yourUid),
-      onLongPress: () => _deleteItem(index),
+      onLongPress: () => _leaveChatRoom(index),
       leading: CircleAvatar(
         radius: 30,
         foregroundImage: NetworkImage(
@@ -133,7 +133,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: _addItem,
+            onPressed: _findChatUser,
             icon: const FaIcon(
               FontAwesomeIcons.plus,
             ),
@@ -146,7 +146,6 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
         future: chatRoomList,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            // print(snapshot.data);
             return Center(
               child: Container(
                 constraints: const BoxConstraints(

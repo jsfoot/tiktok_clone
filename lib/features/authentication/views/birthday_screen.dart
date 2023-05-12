@@ -17,6 +17,7 @@ class BirthdayScreen extends ConsumerStatefulWidget {
 class _UsernameScreenState extends ConsumerState<BirthdayScreen> {
   final TextEditingController _birthdayController = TextEditingController();
 
+  // ignore: unused_field
   String _birthday = "";
 
   DateTime today = DateTime.now();

@@ -72,9 +72,9 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
         context: context,
         builder: (context) => AlertDialog(
           title: const Text("Message"),
-          content: SingleChildScrollView(
+          content: const SingleChildScrollView(
             child: ListBody(
-              children: const [
+              children: [
                 Text("Please allow permissions"),
                 Text("Can not use this app if you not allow"),
               ],
@@ -233,10 +233,10 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: !_hasPermission || !_cameraController.value.isInitialized
-            ? Column(
+            ? const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text(
                     "Requesting permissions..",
                     style: TextStyle(

@@ -48,6 +48,35 @@ class _VideoCommentsState extends ConsumerState<VideoComments> {
     });
   }
 
+  Future<void> _onLikeTap(
+      {required bool isLiked,
+      required String commentId,
+      required String userId,
+      required String videoId}) async {
+    if (isLiked) {
+      await ref.read(videoCommentProvider.notifier).decreaseLike(
+            commentId: commentId,
+            userId: userId,
+            videoId: videoId,
+          );
+    } else {
+      await ref.read(videoCommentProvider.notifier).increaseLike(
+            commentId: commentId,
+            userId: userId,
+            videoId: videoId,
+          );
+    }
+    setState(() {});
+  }
+
+  Future<void> _create1VideoComment(String videoId, String text) async {
+    await ref.read(videoCommentProvider.notifier).createVideoComment(
+          videoId: videoId,
+          comment: text,
+        );
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final myUid = ref.read(authRepo).user!.uid;
@@ -102,72 +131,91 @@ class _VideoCommentsState extends ConsumerState<VideoComments> {
                           right: Sizes.size16,
                         ),
                         itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) => Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                final commentorUid = snapshot.data![index]['userId'];
-                                if (commentorUid != myUid) {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    fullscreenDialog: true,
-                                    builder: (context) =>
-                                        UserProfileScreen(userId: commentorUid, tab: "otherUser"),
-                                  ));
-                                }
-                              },
-                              child: CircleAvatar(
-                                radius: 18,
-                                backgroundColor: isDark ? Colors.grey.shade500 : null,
-                                foregroundImage: NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${snapshot.data![index]['userId']}?alt=media&",
-                                ),
-                                child: Text(
-                                  snapshot.data![index]['userName'],
-                                  maxLines: 1,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                            Gaps.h10,
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
+                        itemBuilder: (context, index) {
+                          final List likedUsers = snapshot.data![index]['likedUsers'];
+                          final bool isLiked = likedUsers.contains(myUid);
+
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  final commentorUid = snapshot.data![index]['userId'];
+                                  if (commentorUid != myUid) {
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                      fullscreenDialog: true,
+                                      builder: (context) =>
+                                          UserProfileScreen(userId: commentorUid, tab: "otherUser"),
+                                    ));
+                                  }
+                                },
+                                child: CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor: isDark ? Colors.grey.shade500 : null,
+                                  foregroundImage: NetworkImage(
+                                    "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${snapshot.data![index]['userId']}?alt=media&",
+                                  ),
+                                  child: Text(
                                     snapshot.data![index]['userName'],
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: Sizes.size14,
-                                      color: Colors.grey.shade500,
-                                    ),
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
                                   ),
-                                  Gaps.v3,
-                                  Text(
-                                    snapshot.data![index]['content'],
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                            Gaps.h10,
-                            Column(
-                              children: [
-                                FaIcon(
-                                  FontAwesomeIcons.heart,
-                                  size: Sizes.size20,
-                                  color: Colors.grey.shade500,
+                              Gaps.h10,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      snapshot.data![index]['userName'],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: Sizes.size14,
+                                        color: Colors.grey.shade500,
+                                      ),
+                                    ),
+                                    Gaps.v3,
+                                    Text(
+                                      snapshot.data![index]['content'],
+                                    ),
+                                  ],
                                 ),
-                                Gaps.v2,
-                                Text(
-                                  snapshot.data![index]['likes'].toString(),
-                                  style: TextStyle(
-                                    color: Colors.grey.shade500,
-                                  ),
+                              ),
+                              Gaps.h10,
+                              GestureDetector(
+                                onTap: () {
+                                  _onLikeTap(
+                                    isLiked: isLiked,
+                                    commentId: snapshot.data![index]['commentId'],
+                                    userId: myUid,
+                                    videoId: snapshot.data![index]['videoId'],
+                                  );
+                                },
+                                child: Column(
+                                  children: [
+                                    FaIcon(
+                                      isLiked
+                                          ? FontAwesomeIcons.solidHeart
+                                          : FontAwesomeIcons.heart,
+                                      size: Sizes.size20,
+                                      color: isLiked
+                                          ? Theme.of(context).primaryColor
+                                          : Colors.grey.shade500,
+                                    ),
+                                    Gaps.v2,
+                                    Text(
+                                      snapshot.data![index]['likes'].toString(),
+                                      style: TextStyle(
+                                        color: Colors.grey.shade500,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ),
                     Positioned(
@@ -249,14 +297,11 @@ class _VideoCommentsState extends ConsumerState<VideoComments> {
                                             if (_isWriting)
                                               GestureDetector(
                                                 onTap: () {
-                                                  ref
-                                                      .read(videoCommentProvider.notifier)
-                                                      .createVideoComment(
-                                                        videoId: widget.videoId,
-                                                        comment: _textEditingController.text,
-                                                      );
+                                                  _create1VideoComment(
+                                                      widget.videoId, _textEditingController.text);
                                                   _textEditingController.clear();
                                                   _onstopWriting();
+                                                  setState(() {});
                                                 },
                                                 child: FaIcon(
                                                   FontAwesomeIcons.circleArrowUp,

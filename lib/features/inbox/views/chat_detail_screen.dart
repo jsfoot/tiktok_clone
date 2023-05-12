@@ -65,6 +65,24 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     await ref.read(messagesProvider(widget.chatRoomId).notifier).deleteMessage(createdAt, isLast);
   }
 
+  Future<void> _onAvatarTap(String userId) async {
+    await showModalBottomSheet(
+      isScrollControlled: false,
+      useSafeArea: true,
+      context: context,
+      builder: (context) => Center(
+        heightFactor: 1.0,
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: Breakpoints.lg,
+          ),
+          child: UserProfileScreen(userId: userId, tab: "otherUser"),
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+    );
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -146,9 +164,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                   ),
                 ),
                 subtitle: const Text("Active now"),
-                trailing: Row(
+                trailing: const Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     FaIcon(
                       FontAwesomeIcons.flag,
                       size: Sizes.size20,
@@ -166,12 +184,15 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                 horizontalTitleGap: Sizes.size8,
                 leading: Stack(
                   children: [
-                    CircleAvatar(
-                      radius: Sizes.size24,
-                      foregroundImage: NetworkImage(
-                          "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.yourUid}?alt=media&"),
-                      child: const Text(
-                        " ",
+                    GestureDetector(
+                      onTap: () => _onAvatarTap(widget.yourUid),
+                      child: CircleAvatar(
+                        radius: Sizes.size24,
+                        foregroundImage: NetworkImage(
+                            "https://firebasestorage.googleapis.com/v0/b/tiktok-clone-76fcb.appspot.com/o/avatar%2F${widget.yourUid}?alt=media&"),
+                        child: const Text(
+                          " ",
+                        ),
                       ),
                     ),
                     Positioned(
@@ -204,9 +225,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                   ),
                 ),
                 subtitle: const Text("Active now"),
-                trailing: Row(
+                trailing: const Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     FaIcon(
                       FontAwesomeIcons.flag,
                       size: Sizes.size20,
@@ -272,7 +293,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                             builder: (context) => AlertDialog(
                                               title: const Text("Delete message"),
                                               content:
-                                                  const Text("are you sure delete this message?"),
+                                                  const Text("Are you sure delete this message?"),
                                               actions: [
                                                 TextButton(
                                                   onPressed: () {
@@ -324,9 +345,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                     DateTime.fromMillisecondsSinceEpoch(data[index].createdAt)
                                         .toString()
                                         .substring(11, 16),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: Sizes.size10,
-                                      color: Colors.black54,
+                                      color: isDarkMode(context) ? Colors.white54 : Colors.black54,
                                     ),
                                   ),
                                 ],
@@ -426,9 +447,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                         padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
                                         width: Sizes.size80,
                                         height: Sizes.size28,
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
-                                          children: const [
+                                          children: [
                                             Text("\u{2764}"),
                                             Text("\u{2764}"),
                                             Text("\u{2764}"),
@@ -450,9 +471,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                         padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
                                         width: Sizes.size80,
                                         height: Sizes.size28,
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
-                                          children: const [
+                                          children: [
                                             Text("\u{1F602}"),
                                             Text("\u{1F602}"),
                                             Text("\u{1F602}"),
@@ -474,9 +495,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                         padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
                                         width: Sizes.size80,
                                         height: Sizes.size28,
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
-                                          children: const [
+                                          children: [
                                             Text("\u{1F44D}"),
                                             Text("\u{1F44D}"),
                                             Text("\u{1F44D}"),
@@ -493,9 +514,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                       padding: const EdgeInsets.symmetric(vertical: Sizes.size2),
                                       width: Sizes.size72 + Sizes.size36,
                                       height: Sizes.size28,
-                                      child: Row(
+                                      child: const Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
-                                        children: const [
+                                        children: [
                                           FaIcon(
                                             FontAwesomeIcons.circlePlay,
                                             size: Sizes.size16,

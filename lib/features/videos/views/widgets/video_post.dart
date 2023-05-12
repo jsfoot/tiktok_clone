@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:math';
+
+import 'dart:js_interop';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -118,9 +119,9 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
   }
 
   void _initVideoPlayer() async {
-    // _videoPlayerController = VideoPlayerController.network(widget.videoData.fileUrl);
-    int index = Random().nextInt(5);
-    _videoPlayerController = VideoPlayerController.asset(assetsList[index]);
+    _videoPlayerController = VideoPlayerController.network(widget.videoData.fileUrl);
+    // int index = Random().nextInt(5);
+    // _videoPlayerController = VideoPlayerController.asset(assetsList[index]);
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
 
@@ -205,9 +206,12 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
     }
 
     await showModalBottomSheet(
-      isScrollControlled: true,
+      isScrollControlled: false,
       useSafeArea: true,
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
       builder: (context) => Center(
         heightFactor: 1.0,
         child: Container(
@@ -349,17 +353,29 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                   children: [
                     GestureDetector(
                       onTap: _onSeeMoreTap,
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width / 2,
-                        child: Text(
-                          widget.videoData.description,
-                          style: const TextStyle(
-                            fontSize: Sizes.size16,
-                            color: Colors.white70,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: Text(
+                              widget.videoData.description,
+                              style: const TextStyle(
+                                fontSize: Sizes.size16,
+                                color: Colors.white70,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: _maxLines,
+                            ),
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: _maxLines,
-                        ),
+                          Text(
+                            _seeMoreText,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -416,7 +432,7 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                   child: VideoButton(
                     color: Colors.white,
                     icon: FontAwesomeIcons.solidComment,
-                    text: commentsCounts,
+                    text: commentsCounts.isNull ? "0" : commentsCounts,
                     // text: S.of(context).commentCount(widget.videoData.comments),
                   ),
                 ),

@@ -22,7 +22,7 @@ class Avatar extends ConsumerWidget {
   Future<void> _onAvatarTap(WidgetRef ref) async {
     final xfile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
-      imageQuality: 40,
+      imageQuality: 100,
       maxHeight: 150,
       maxWidth: 100,
     );

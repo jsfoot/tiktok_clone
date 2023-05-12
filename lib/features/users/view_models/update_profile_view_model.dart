@@ -5,6 +5,7 @@ import 'package:tiktok_clone/features/users/repos/user_repo.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 
 class UpdateProfileViewModel extends AsyncNotifier<void> {
+  // ignore: unused_field
   late final UserRepository _repository;
 
   @override

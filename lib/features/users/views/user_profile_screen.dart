@@ -750,11 +750,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                                 size: Sizes.size20,
                                               ),
                                             ),
-                                            Positioned(
+                                            const Positioned(
                                               bottom: 4,
                                               left: 4,
                                               child: Row(
-                                                children: const [
+                                                children: [
                                                   Icon(
                                                     Icons.play_arrow_outlined,
                                                     color: Colors.white,
@@ -843,11 +843,11 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                                 size: Sizes.size20,
                                               ),
                                             ),
-                                            Positioned(
+                                            const Positioned(
                                               bottom: 4,
                                               left: 4,
                                               child: Row(
-                                                children: const [
+                                                children: [
                                                   Icon(
                                                     Icons.play_arrow_outlined,
                                                     color: Colors.white,

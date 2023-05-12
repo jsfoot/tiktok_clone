@@ -19,16 +19,21 @@ class VideoCommentViewModel extends AsyncNotifier<void> {
   Future<void> createVideoComment({required String videoId, required String comment}) async {
     final user = ref.read(authRepo).user!;
     final profile = await _userRepository.getUserProfile(user.uid);
+    final createdTime = DateTime.now().millisecondsSinceEpoch;
+    final commentId = '${videoId}000${user.uid}000$createdTime';
     await _videoCommentRepository.createVideoComment(
-      VideoCommentModel(
+      commentModel: VideoCommentModel(
+        commentId: commentId,
         userName: profile!['name'],
         userId: user.uid,
         content: comment,
         videoId: videoId,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
+        createdAt: createdTime,
         likes: 0,
+        likedUsers: [],
       ),
-      videoId,
+      commentId: commentId,
+      videoId: videoId,
     );
   }
 
@@ -39,6 +44,24 @@ class VideoCommentViewModel extends AsyncNotifier<void> {
       result.add(element.data());
     }
     return result;
+  }
+
+  Future<void> increaseLike(
+      {required String commentId, required String userId, required String videoId}) async {
+    await ref.read(videoCommentRepo).increaseLike(
+          commentId: commentId,
+          userId: userId,
+          videoId: videoId,
+        );
+  }
+
+  Future<void> decreaseLike(
+      {required String commentId, required String userId, required String videoId}) async {
+    await ref.read(videoCommentRepo).decreaseLike(
+          commentId: commentId,
+          userId: userId,
+          videoId: videoId,
+        );
   }
 }
 
