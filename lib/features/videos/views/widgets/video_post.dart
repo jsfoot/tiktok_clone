@@ -1,7 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'dart:js_interop';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -432,7 +430,7 @@ class VideoPostState extends ConsumerState<VideoPost> with SingleTickerProviderS
                   child: VideoButton(
                     color: Colors.white,
                     icon: FontAwesomeIcons.solidComment,
-                    text: commentsCounts.isNull ? "0" : commentsCounts,
+                    text: commentsCounts,
                     // text: S.of(context).commentCount(widget.videoData.comments),
                   ),
                 ),

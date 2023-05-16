@@ -487,7 +487,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                                           Column(
                                                             children: [
                                                               Text(
-                                                                snapshot.data!['numOfFollowings']
+                                                                snapshot.data!['numOfFollowers']
                                                                     .toString(),
                                                                 style: const TextStyle(
                                                                   fontWeight: FontWeight.bold,

@@ -120,12 +120,17 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             ),
           ),
           Gaps.h16,
-          Text(
-            snapshot.data![index]['bio'],
-            style: const TextStyle(
-              fontWeight: FontWeight.w300,
-              fontSize: Sizes.size14,
-              color: Colors.grey,
+          SizedBox(
+            width: Sizes.size96 + Sizes.size32,
+            child: Text(
+              snapshot.data![index]['bio'],
+              maxLines: 1,
+              style: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontSize: Sizes.size14,
+                color: Colors.grey,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ),
         ],

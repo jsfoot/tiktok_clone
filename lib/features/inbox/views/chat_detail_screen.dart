@@ -389,9 +389,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                     DateTime.fromMillisecondsSinceEpoch(data[index].createdAt)
                                         .toString()
                                         .substring(11, 16),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: Sizes.size10,
-                                      color: Colors.black54,
+                                      color: isDarkMode(context) ? Colors.white54 : Colors.black54,
                                     ),
                                   ),
                                 ],
