@@ -44,7 +44,9 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   void _onEnterAppTap() {
-    context.go("/home");
+    if (_showingPage != Page.first) {
+      context.go("/home");
+    }
   }
 
   @override
