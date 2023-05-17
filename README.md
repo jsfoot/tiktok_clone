@@ -10,14 +10,7 @@
 [Youtube](https://youtu.be/vhiCTNhQvV8)
 
 
-<img src="./screenshots/signup_screen.jpg" width="25%" height="25%">
-<img src="./screenshots/birthday_screen.jpg" width="25%" height="25%">
-<img src="./screenshots/video_post.gif" width="25%" height="25%">
-<img src="./screenshots/video_comments.jpg" width="25%" height="25%">
-<img src="./screenshots/discover_screen_Top.jpg" width="25%" height="25%">
-<img src="./screenshots/discover_screen_Users_tileTap.jpg" width="25%" height="25%">
-<img src="./screenshots/inbox_allActivity_screen_allActivity_down.gif" width="25%" height="25%">
-<img src="./screenshots/chat_detail_screen.jpg" width="25%" height="25%">
+<img src="./screenshots/signup_screen.jpg" width="25%" height="25%"> <img src="./screenshots/birthday_screen.jpg" width="25%" height="25%"> <img src="./screenshots/video_post.gif" width="25%" height="25%"> <img src="./screenshots/video_comments.jpg" width="25%" height="25%"> <img src="./screenshots/discover_screen_Top.jpg" width="25%" height="25%"> <img src="./screenshots/discover_screen_Users_tileTap.jpg" width="25%" height="25%"> <img src="./screenshots/inbox_allActivity_screen_allActivity_down.gif" width="25%" height="25%"> <img src="./screenshots/chat_detail_screen.jpg" width="25%" height="25%">
 
 ### Design Pattern
 
