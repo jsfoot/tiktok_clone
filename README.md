@@ -172,4 +172,4 @@ lib
 
 ## Reference
 
-https://github.com/nomadcoders/tiktok_clone
+NomadCoder's Lecture
